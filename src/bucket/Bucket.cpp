@@ -435,10 +435,11 @@ compareSizes(std::string const& objType, uint64_t inDatabase,
              uint64_t inBucketlist)
 {
     if (inDatabase != inBucketlist)
-    {
+    {/*
         throw std::runtime_error(fmt::format(
             "{} object count mismatch: DB has {}, BucketList has {}", objType,
-            inDatabase, inBucketlist));
+            inDatabase, inBucketlist));*/
+		throw std::runtime_error("{} object count mismatch: DB has {}, BucketList has {}");
     }
 }
 

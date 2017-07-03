@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "asio.hpp"
 #include "herder/TxSetFrame.h"
 #include "util/XDRStream.h"
 #include "work/Work.h"

@@ -31,5 +31,9 @@ class CreateAccountOpFrame : public OperationFrame
     {
         return res.tr().createAccountResult().code();
     }
+
+  private:
+	  bool addTrustLine(AccountFrame* account, const char* name, Application& app, LedgerDelta& delta,
+						LedgerManager& ledgerManager);
 };
 }

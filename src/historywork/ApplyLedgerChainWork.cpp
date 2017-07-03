@@ -9,7 +9,7 @@
 #include "ledger/LedgerManager.h"
 #include "lib/xdrpp/xdrpp/printer.h"
 #include "main/Application.h"
-#include "util/Format.h"
+#include "src/util/Format.h"
 
 namespace stellar
 {
@@ -32,7 +32,8 @@ ApplyLedgerChainWork::getStatus() const
     if (mState == WORK_RUNNING)
     {
         std::string task = "applying checkpoint";
-        return fmtProgress(mApp, task, mFirstSeq, mLastSeq, mCurrSeq);
+		
+		return fmtProgress(mApp, task, mFirstSeq, mLastSeq, mCurrSeq);
     }
     return Work::getStatus();
 }

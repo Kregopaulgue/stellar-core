@@ -71,7 +71,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>src;../../src;../../lib;../../lib/libmedida/src;../../lib/soci/src/core;../../lib/autocheck/include;../../lib/cereal/include;../../lib/asio/include;../../lib/xdrpp;../../lib/libsodium/src/libsodium/include;../..;src/generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(POSTGRES_PATH_INCLUDE);src;../../src;../../lib;../../lib/libmedida/src;../../lib/soci/src/core;../../lib/autocheck/include;../../lib/cereal/include;../../lib/asio/include;../../lib/xdrpp;../../lib/libsodium/src/libsodium/include;../..;src/generated;$(SolutionDir)/../../lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;ASIO_STANDALONE;USE_POSTGRES;_WINSOCK_DEPRECATED_NO_WARNINGS;SODIUM_STATIC;ASIO_SEPARATE_COMPILATION;ASIO_ERROR_CATEGORY_NOEXCEPT=noexcept;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0501;WIN32;_MBCS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -85,7 +85,9 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;%(AdditionalDependencies);C:\Program Files\PostgreSQL\9.4\lib\libpq.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;fmt.lib;%(AdditionalDependencies);C:\Program Files\PostgreSQL\9.4\lib\libpq.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\kiril\Desktop\tryStellarCore\stellar-core\testLib;M:\ProgramFiles\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent>
       <Command>@echo Checking XDR</Command>
@@ -124,7 +126,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>src;../../src;../../lib;../../lib/libmedida/src;../../lib/soci/src/core;../../lib/autocheck/include;../../lib/cereal/include;../../lib/asio/include;../../lib/xdrpp;../../lib/libsodium/src/libsodium/include;../..;src/generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(POSTGRES_PATH_INCLUDE);src;../../src;../../lib;../../lib/libmedida/src;../../lib/soci/src/core;../../lib/autocheck/include;../../lib/cereal/include;../../lib/asio/include;../../lib/xdrpp;../../lib/libsodium/src/libsodium/include;../..;src/generated;$(SolutionDir)/../../lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;ASIO_STANDALONE;_WINSOCK_DEPRECATED_NO_WARNINGS;SODIUM_STATIC;ASIO_SEPARATE_COMPILATION;ASIO_ERROR_CATEGORY_NOEXCEPT=noexcept;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0501;WIN32;_MBCS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -138,9 +140,11 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;fmt.lib;</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>C:\Users\kiril\Desktop\tryStellarCore\stellar-core\testLib;M:\ProgramFiles\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent>
       <Command>@echo Checking XDR</Command>
@@ -182,7 +186,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>src;../../src;../../lib;../../lib/libmedida/src;../../lib/soci/src/core;../../lib/autocheck/include;../../lib/cereal/include;../../lib/asio/include;../../lib/xdrpp;../../lib/libsodium/src/libsodium/include;../..;src/generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(POSTGRES_PATH_INCLUDE);src;../../src;../../lib;../../lib/libmedida/src;../../lib/soci/src/core;../../lib/autocheck/include;../../lib/cereal/include;../../lib/asio/include;../../lib/xdrpp;../../lib/libsodium/src/libsodium/include;../..;src/generated;$(SolutionDir)/../../lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;ASIO_STANDALONE;USE_POSTGRES;_WINSOCK_DEPRECATED_NO_WARNINGS;SODIUM_STATIC;ASIO_SEPARATE_COMPILATION;ASIO_ERROR_CATEGORY_NOEXCEPT=noexcept;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0501;WIN32;_MBCS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BrowseInformation>false</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -193,7 +197,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;%(AdditionalDependencies);C:\Program Files\PostgreSQL\9.4\lib\libpq.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;fmt.lib;%(AdditionalDependencies);C:\Program Files\PostgreSQL\9.4\lib\libpq.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\kiril\Desktop\tryStellarCore\stellar-core\testLib;M:\ProgramFiles\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent>
       <Command>@echo Checking XDR</Command>
@@ -220,6 +226,7 @@
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\lib\util\easylogging++.cc" />
     <ClCompile Include="..\..\src\bucket\Bucket.cpp" />
     <ClCompile Include="..\..\src\bucket\BucketApplicator.cpp" />
     <ClCompile Include="..\..\src\bucket\BucketList.cpp" />
@@ -236,7 +243,10 @@
     <ClCompile Include="..\..\src\crypto\SignerKey.cpp" />
     <ClCompile Include="..\..\src\crypto\SignerKeyUtils.cpp" />
     <ClCompile Include="..\..\src\crypto\StrKey.cpp" />
+    <ClCompile Include="..\..\src\database\AccountQueries.cpp" />
     <ClCompile Include="..\..\src\database\Database.cpp" />
+    <ClCompile Include="..\..\src\database\DatabaseConnectionString.cpp" />
+    <ClCompile Include="..\..\src\database\DatabaseConnectionStringTest.cpp" />
     <ClCompile Include="..\..\src\database\DatabaseTests.cpp" />
     <ClCompile Include="..\..\src\herder\Herder.cpp" />
     <ClCompile Include="..\..\src\herder\HerderImpl.cpp" />
@@ -245,14 +255,47 @@
     <ClCompile Include="..\..\src\herder\LedgerCloseData.cpp" />
     <ClCompile Include="..\..\src\herder\PendingEnvelopes.cpp" />
     <ClCompile Include="..\..\src\herder\TxSetFrame.cpp" />
+    <ClCompile Include="..\..\src\historywork\ApplyBucketsWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\ApplyLedgerChainWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\BatchDownloadWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\BucketDownloadWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\CatchupCompleteImmediateWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\CatchupCompleteWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\CatchupMinimalWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\CatchupRecentWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\CatchupTransactionsWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\CatchupWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\FetchRecentQsetsWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\GetAndUnzipRemoteFileWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\GetHistoryArchiveStateWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\GetRemoteFileWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\GunzipFileWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\GzipFileWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\MakeRemoteDirWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\PublishWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\PutHistoryArchiveStateWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\PutRemoteFileWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\PutSnapshotFilesWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\RepairMissingBucketsWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\ResolveSnapshotWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\RunCommandWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\VerifyBucketWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\VerifyLedgerChainWork.cpp" />
+    <ClCompile Include="..\..\src\historywork\WriteSnapshotWork.cpp" />
+    <ClCompile Include="..\..\src\history\CatchupManagerImpl.cpp" />
     <ClCompile Include="..\..\src\history\FileTransferInfo.cpp" />
     <ClCompile Include="..\..\src\history\HistoryArchive.cpp" />
     <ClCompile Include="..\..\src\history\HistoryManagerImpl.cpp" />
     <ClCompile Include="..\..\src\history\HistoryTests.cpp" />
-    <ClCompile Include="..\..\src\history\HistoryWork.cpp" />
     <ClCompile Include="..\..\src\history\InferredQuorum.cpp" />
     <ClCompile Include="..\..\src\history\InferredQuorumTests.cpp" />
     <ClCompile Include="..\..\src\history\StateSnapshot.cpp" />
+    <ClCompile Include="..\..\src\invariant\CacheIsConsistentWithDatabase.cpp" />
+    <ClCompile Include="..\..\src\invariant\ChangedAccountsSubnetriesCountIsValid.cpp" />
+    <ClCompile Include="..\..\src\invariant\Invariant.cpp" />
+    <ClCompile Include="..\..\src\invariant\InvariantDoesNotHold.cpp" />
+    <ClCompile Include="..\..\src\invariant\Invariants.cpp" />
+    <ClCompile Include="..\..\src\invariant\TotalCoinsEqualsBalancesPlusFeePool.cpp" />
     <ClCompile Include="..\..\src\ledger\AccountFrame.cpp" />
     <ClCompile Include="..\..\src\ledger\DataFrame.cpp" />
     <ClCompile Include="..\..\src\ledger\LedgerDelta.cpp" />
@@ -266,6 +309,8 @@
     <ClCompile Include="..\..\src\ledger\LedgerTests.cpp" />
     <ClCompile Include="..\..\src\ledger\LedgerTestUtils.cpp" />
     <ClCompile Include="..\..\src\ledger\OfferFrame.cpp" />
+    <ClCompile Include="..\..\src\ledger\SyncingLedgerChain.cpp" />
+    <ClCompile Include="..\..\src\ledger\SyncingLedgerChainTests.cpp" />
     <ClCompile Include="..\..\src\ledger\TrustFrame.cpp" />
     <ClCompile Include="..\..\lib\asio\src\asio.cpp" />
     <ClCompile Include="..\..\lib\http\connection.cpp" />
@@ -275,7 +320,6 @@
     <ClCompile Include="..\..\lib\http\request_parser.cpp" />
     <ClCompile Include="..\..\lib\http\server.cpp" />
     <ClCompile Include="..\..\lib\json\jsoncpp.cpp" />
-    <ClCompile Include="..\..\lib\util\format.cc" />
     <ClCompile Include="..\..\lib\util\getopt_long.c" />
     <ClCompile Include="..\..\lib\util\uint128_t.cpp" />
     <ClCompile Include="..\..\lib\xdrpp\tests\arpc.cc">
@@ -358,6 +402,8 @@
     <ClCompile Include="..\..\src\simulation\Topologies.cpp" />
     <ClCompile Include="..\..\src\test\test.cpp" />
     <ClCompile Include="..\..\src\test\TestAccount.cpp" />
+    <ClCompile Include="..\..\src\test\TestExceptions.cpp" />
+    <ClCompile Include="..\..\src\test\TestPrinter.cpp" />
     <ClCompile Include="..\..\src\test\TestUtils.cpp" />
     <ClCompile Include="..\..\src\test\TxTests.cpp" />
     <ClCompile Include="..\..\src\transactions\AllowTrustOpFrame.cpp" />
@@ -384,14 +430,18 @@
     <ClCompile Include="..\..\src\transactions\SignatureUtilsTest.cpp" />
     <ClCompile Include="..\..\src\transactions\TxEnvelopeTests.cpp" />
     <ClCompile Include="..\..\lib\util\crc16.cpp" />
+    <ClCompile Include="..\..\src\util\BigDivideTests.cpp" />
     <ClCompile Include="..\..\src\util\BitsetEnumerator.cpp" />
     <ClCompile Include="..\..\src\util\BitsetEnumeratorTests.cpp" />
+    <ClCompile Include="..\..\src\util\Format.cpp" />
     <ClCompile Include="..\..\src\util\Fs.cpp" />
+    <ClCompile Include="..\..\src\util\FsTests.cpp" />
     <ClCompile Include="..\..\src\util\GlobalChecks.cpp" />
     <ClCompile Include="..\..\src\util\HashOfHash.cpp" />
     <ClCompile Include="..\..\src\util\Math.cpp" />
     <ClCompile Include="..\..\src\util\NtpClient.cpp" />
     <ClCompile Include="..\..\src\util\NtpWork.cpp" />
+    <ClCompile Include="..\..\src\util\SecretValue.cpp" />
     <ClCompile Include="..\..\src\util\StatusManager.cpp" />
     <ClCompile Include="..\..\src\util\StatusManagerTest.cpp" />
     <ClCompile Include="..\..\src\util\TmpDir.cpp" />
@@ -419,6 +469,8 @@
     <ClCompile Include="..\..\src\work\WorkManagerImpl.cpp" />
     <ClCompile Include="..\..\src\work\WorkParent.cpp" />
     <ClCompile Include="..\..\src\work\WorkTests.cpp" />
+    <ClCompile Include="CreateAccountTest.cpp" />
+    <ClCompile Include="M:\fmt\fmt\format.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\lib\catch.hpp" />
@@ -439,13 +491,50 @@
     <ClInclude Include="..\..\src\crypto\SignerKey.h" />
     <ClInclude Include="..\..\src\crypto\SignerKeyUtils.h" />
     <ClInclude Include="..\..\src\crypto\StrKey.h" />
+    <ClInclude Include="..\..\src\database\AccountQueries.h" />
     <ClInclude Include="..\..\src\database\Database.h" />
+    <ClInclude Include="..\..\src\database\DatabaseConnectionString.h" />
     <ClInclude Include="..\..\src\herder\HerderUtils.h" />
-    <ClInclude Include="..\..\src\history\HistoryWork.h" />
+    <ClInclude Include="..\..\src\historywork\ApplyBucketsWork.h" />
+    <ClInclude Include="..\..\src\historywork\ApplyLedgerChainWork.h" />
+    <ClInclude Include="..\..\src\historywork\BatchDownloadWork.h" />
+    <ClInclude Include="..\..\src\historywork\BucketDownloadWork.h" />
+    <ClInclude Include="..\..\src\historywork\CatchupCompleteImmediateWork.h" />
+    <ClInclude Include="..\..\src\historywork\CatchupCompleteWork.h" />
+    <ClInclude Include="..\..\src\historywork\CatchupMinimalWork.h" />
+    <ClInclude Include="..\..\src\historywork\CatchupRecentWork.h" />
+    <ClInclude Include="..\..\src\historywork\CatchupTransactionsWork.h" />
+    <ClInclude Include="..\..\src\historywork\CatchupWork.h" />
+    <ClInclude Include="..\..\src\historywork\FetchRecentQsetsWork.h" />
+    <ClInclude Include="..\..\src\historywork\GetAndUnzipRemoteFileWork.h" />
+    <ClInclude Include="..\..\src\historywork\GetHistoryArchiveStateWork.h" />
+    <ClInclude Include="..\..\src\historywork\GetRemoteFileWork.h" />
+    <ClInclude Include="..\..\src\historywork\GunzipFileWork.h" />
+    <ClInclude Include="..\..\src\historywork\GzipFileWork.h" />
+    <ClInclude Include="..\..\src\historywork\MakeRemoteDirWork.h" />
+    <ClInclude Include="..\..\src\historywork\PublishWork.h" />
+    <ClInclude Include="..\..\src\historywork\PutHistoryArchiveStateWork.h" />
+    <ClInclude Include="..\..\src\historywork\PutRemoteFileWork.h" />
+    <ClInclude Include="..\..\src\historywork\PutSnapshotFilesWork.h" />
+    <ClInclude Include="..\..\src\historywork\RepairMissingBucketsWork.h" />
+    <ClInclude Include="..\..\src\historywork\ResolveSnapshotWork.h" />
+    <ClInclude Include="..\..\src\historywork\RunCommandWork.h" />
+    <ClInclude Include="..\..\src\historywork\VerifyBucketWork.h" />
+    <ClInclude Include="..\..\src\historywork\VerifyLedgerChainWork.h" />
+    <ClInclude Include="..\..\src\historywork\WriteSnapshotWork.h" />
+    <ClInclude Include="..\..\src\history\CatchupManager.h" />
+    <ClInclude Include="..\..\src\history\CatchupManagerImpl.h" />
     <ClInclude Include="..\..\src\history\InferredQuorum.h" />
+    <ClInclude Include="..\..\src\invariant\CacheIsConsistentWithDatabase.h" />
+    <ClInclude Include="..\..\src\invariant\ChangedAccountsSubnetriesCountIsValid.h" />
+    <ClInclude Include="..\..\src\invariant\Invariant.h" />
+    <ClInclude Include="..\..\src\invariant\InvariantDoesNotHold.h" />
+    <ClInclude Include="..\..\src\invariant\Invariants.h" />
+    <ClInclude Include="..\..\src\invariant\TotalCoinsEqualsBalancesPlusFeePool.h" />
     <ClInclude Include="..\..\src\ledger\DataFrame.h" />
     <ClInclude Include="..\..\src\history\StateSnapshot.h" />
     <ClInclude Include="..\..\src\ledger\LedgerTestUtils.h" />
+    <ClInclude Include="..\..\src\ledger\SyncingLedgerChain.h" />
     <ClInclude Include="..\..\src\main\ExternalQueue.h" />
     <ClInclude Include="..\..\src\main\NtpSynchronizationChecker.h" />
     <ClInclude Include="..\..\src\overlay\BanManager.h" />
@@ -482,7 +571,6 @@
     <ClInclude Include="..\..\lib\json\json.h" />
     <ClInclude Include="..\..\lib\util\cpptoml.h" />
     <ClInclude Include="..\..\lib\util\easylogging++.h" />
-    <ClInclude Include="..\..\lib\util\format.h" />
     <ClInclude Include="..\..\lib\util\getopt.h" />
     <ClInclude Include="..\..\lib\util\lrucache.hpp" />
     <ClInclude Include="..\..\lib\util\uint128_t.h" />
@@ -518,6 +606,7 @@
     <ClInclude Include="..\..\src\test\test.h" />
     <ClInclude Include="..\..\src\test\TestAccount.h" />
     <ClInclude Include="..\..\src\test\TestExceptions.h" />
+    <ClInclude Include="..\..\src\test\TestPrinter.h" />
     <ClInclude Include="..\..\src\test\TestUtils.h" />
     <ClInclude Include="..\..\src\test\TxTests.h" />
     <ClInclude Include="..\..\src\transactions\AllowTrustOpFrame.h" />
@@ -536,10 +625,12 @@
     <ClInclude Include="..\..\src\transactions\SignatureUtils.h" />
     <ClInclude Include="..\..\src\transactions\TransactionFrame.h" />
     <ClInclude Include="..\..\src\transactions\ChangeTrustOpFrame.h" />
+    <ClInclude Include="..\..\src\util\Algoritm.h" />
     <ClInclude Include="..\..\src\util\asio.h" />
     <ClInclude Include="..\..\lib\util\basen.h" />
     <ClInclude Include="..\..\lib\util\crc16.h" />
     <ClInclude Include="..\..\src\util\BitsetEnumerator.h" />
+    <ClInclude Include="..\..\src\util\Format.h" />
     <ClInclude Include="..\..\src\util\Fs.h" />
     <ClInclude Include="..\..\src\util\GlobalChecks.h" />
     <ClInclude Include="..\..\src\util\HashOfHash.h" />
@@ -551,6 +642,8 @@
     <ClInclude Include="..\..\src\util\NtpClient.h" />
     <ClInclude Include="..\..\src\util\NtpWork.h" />
     <ClInclude Include="..\..\src\util\optional.h" />
+    <ClInclude Include="..\..\src\util\SecretValue.h" />
+    <ClInclude Include="..\..\src\util\SociNoWarnings.h" />
     <ClInclude Include="..\..\src\util\StatusManager.h" />
     <ClInclude Include="..\..\src\util\TmpDir.h" />
     <ClInclude Include="..\..\src\util\Timer.h" />
@@ -560,6 +653,8 @@
     <ClInclude Include="..\..\src\work\WorkManager.h" />
     <ClInclude Include="..\..\src\work\WorkManagerImpl.h" />
     <ClInclude Include="..\..\src\work\WorkParent.h" />
+    <ClInclude Include="CreateAccountTest.h" />
+    <ClInclude Include="M:\fmt\fmt\format.h" />
     <ClInclude Include="src\generated\xdr\Stellar-ledger-entries.h" />
     <ClInclude Include="src\generated\xdr\Stellar-ledger.h" />
     <ClInclude Include="src\generated\xdr\Stellar-overlay.h" />
@@ -691,6 +786,8 @@
     </CustomBuild>
     <None Include="..\..\src\overlay\readme.md" />
     <None Include="..\..\src\scp\readme.md" />
+    <None Include="..\..\src\test\selftest-nopg" />
+    <None Include="..\..\src\test\selftest-pg" />
     <None Include="..\..\src\transactions\readme.md" />
     <None Include="libmedida\libmedida.vcxproj" />
   </ItemGroup>

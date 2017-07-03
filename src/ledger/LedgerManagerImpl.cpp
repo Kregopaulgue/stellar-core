@@ -24,7 +24,7 @@
 #include "main/Config.h"
 #include "overlay/OverlayManager.h"
 #include "util/Logging.h"
-#include "util/format.h"
+#include "lib/util/format.h"
 #include "util/make_unique.h"
 
 #include "medida/counter.h"

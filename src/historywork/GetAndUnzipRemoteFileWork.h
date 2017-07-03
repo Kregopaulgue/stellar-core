@@ -3,7 +3,7 @@
 // of this distribution or at http://www.apache.org/licenses/LICENSE-2.0
 
 #pragma once
-
+#include "asio.hpp"
 #include "history/FileTransferInfo.h"
 #include "work/Work.h"
 

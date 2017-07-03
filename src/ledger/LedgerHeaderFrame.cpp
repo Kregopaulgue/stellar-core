@@ -10,7 +10,7 @@
 #include "database/Database.h"
 #include "util/Logging.h"
 #include "util/XDRStream.h"
-#include "util/format.h"
+#include "lib/util/format.h"
 #include "util/types.h"
 #include "xdrpp/marshal.h"
 #include <util/basen.h>
