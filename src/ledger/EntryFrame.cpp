@@ -266,6 +266,11 @@ LedgerEntryKey(LedgerEntry const& e)
         k.data().accountID = d.data().accountID;
         k.data().dataName = d.data().dataName;
         break;
+	case ALIAS:   // my_change: I add new Entry (Alias), where will i get second id? 
+		k.type(ALIAS);
+		k.alias().accountSourceID = d.account().accountID;
+		k.alias().accountID = d.account().accountID;
+		break;
     }
     return k;
 }

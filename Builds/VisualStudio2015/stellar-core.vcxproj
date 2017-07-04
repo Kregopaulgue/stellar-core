@@ -469,6 +469,7 @@
     <ClCompile Include="..\..\src\work\WorkManagerImpl.cpp" />
     <ClCompile Include="..\..\src\work\WorkParent.cpp" />
     <ClCompile Include="..\..\src\work\WorkTests.cpp" />
+    <ClCompile Include="AliasFrame.cpp" />
     <ClCompile Include="CreateAccountTest.cpp" />
     <ClCompile Include="M:\fmt\fmt\format.cc" />
   </ItemGroup>
@@ -653,6 +654,7 @@
     <ClInclude Include="..\..\src\work\WorkManager.h" />
     <ClInclude Include="..\..\src\work\WorkManagerImpl.h" />
     <ClInclude Include="..\..\src\work\WorkParent.h" />
+    <ClInclude Include="AliasFrame.h" />
     <ClInclude Include="CreateAccountTest.h" />
     <ClInclude Include="M:\fmt\fmt\format.h" />
     <ClInclude Include="src\generated\xdr\Stellar-ledger-entries.h" />
@@ -789,6 +791,7 @@
     <None Include="..\..\src\test\selftest-nopg" />
     <None Include="..\..\src\test\selftest-pg" />
     <None Include="..\..\src\transactions\readme.md" />
+    <None Include="ClassDiagram.cd" />
     <None Include="libmedida\libmedida.vcxproj" />
   </ItemGroup>
   <ItemGroup>
