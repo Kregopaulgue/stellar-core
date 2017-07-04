@@ -11,6 +11,7 @@
 #include "ledger/LedgerDelta.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
+#include "ledger/AliasFrame.h"
 #include "xdrpp/marshal.h"
 #include "xdrpp/printer.h"
 
@@ -233,6 +234,9 @@ EntryFrame::storeDelete(LedgerDelta& delta, Database& db, LedgerKey const& key)
     case DATA:
         DataFrame::storeDelete(delta, db, key);
         break;
+	case ALIAS:
+		AliasFrame::storeDelete(delta, db, key);
+		break;
     }
 }
 
@@ -268,8 +272,8 @@ LedgerEntryKey(LedgerEntry const& e)
         break;
 	case ALIAS:   // my_change: I add new Entry (Alias), where will i get second id? 
 		k.type(ALIAS);
-		k.alias().accountSourceID = d.account().accountID;
-		k.alias().accountID = d.account().accountID;
+		k.alias().accountSourceID = d.alias().accountSourceID;
+		k.alias().accountID = d.alias().accountID;
 		break;
     }
     return k;

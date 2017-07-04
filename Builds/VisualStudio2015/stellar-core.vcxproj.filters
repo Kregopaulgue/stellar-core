@@ -756,7 +756,7 @@
     <ClCompile Include="CreateAccountTest.cpp">
       <Filter>transactions\tests</Filter>
     </ClCompile>
-    <ClCompile Include="AliasFrame.cpp">
+    <ClCompile Include="..\..\..\..\AliasFrame.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1325,9 +1325,7 @@
     <ClInclude Include="CreateAccountTest.h">
       <Filter>transactions\tests</Filter>
     </ClInclude>
-    <ClInclude Include="AliasFrame.h">
-      <Filter>ledger</Filter>
-    </ClInclude>
+    <ClInclude Include="..\..\src\ledger\AliasFrame.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\AUTHORS" />

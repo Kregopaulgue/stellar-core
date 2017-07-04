@@ -226,6 +226,7 @@
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\AliasFrame.cpp" />
     <ClCompile Include="..\..\lib\util\easylogging++.cc" />
     <ClCompile Include="..\..\src\bucket\Bucket.cpp" />
     <ClCompile Include="..\..\src\bucket\BucketApplicator.cpp" />
@@ -469,7 +470,6 @@
     <ClCompile Include="..\..\src\work\WorkManagerImpl.cpp" />
     <ClCompile Include="..\..\src\work\WorkParent.cpp" />
     <ClCompile Include="..\..\src\work\WorkTests.cpp" />
-    <ClCompile Include="AliasFrame.cpp" />
     <ClCompile Include="CreateAccountTest.cpp" />
     <ClCompile Include="M:\fmt\fmt\format.cc" />
   </ItemGroup>
@@ -532,6 +532,7 @@
     <ClInclude Include="..\..\src\invariant\InvariantDoesNotHold.h" />
     <ClInclude Include="..\..\src\invariant\Invariants.h" />
     <ClInclude Include="..\..\src\invariant\TotalCoinsEqualsBalancesPlusFeePool.h" />
+    <ClInclude Include="..\..\src\ledger\AliasFrame.h" />
     <ClInclude Include="..\..\src\ledger\DataFrame.h" />
     <ClInclude Include="..\..\src\history\StateSnapshot.h" />
     <ClInclude Include="..\..\src\ledger\LedgerTestUtils.h" />
@@ -654,7 +655,6 @@
     <ClInclude Include="..\..\src\work\WorkManager.h" />
     <ClInclude Include="..\..\src\work\WorkManagerImpl.h" />
     <ClInclude Include="..\..\src\work\WorkParent.h" />
-    <ClInclude Include="AliasFrame.h" />
     <ClInclude Include="CreateAccountTest.h" />
     <ClInclude Include="M:\fmt\fmt\format.h" />
     <ClInclude Include="src\generated\xdr\Stellar-ledger-entries.h" />
