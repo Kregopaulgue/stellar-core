@@ -125,6 +125,12 @@ case DATA:
         AccountID accountID;
         string64 dataName;
     } data;
+case ALIAS:
+	struct
+	{
+		AccountID accountSourceID;
+		AccountID accountID;
+	} alias;
 };
 
 enum BucketEntryType

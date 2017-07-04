@@ -65,7 +65,8 @@ enum LedgerEntryType
     ACCOUNT = 0,
     TRUSTLINE = 1,
     OFFER = 2,
-    DATA = 3
+    DATA = 3,
+	ALIAS = 4
 };
 
 struct Signer
@@ -196,6 +197,18 @@ struct OfferEntry
 /* DataEntry
     Data can be attached to accounts.
 */
+
+struct AliasEntry{
+	AccountID accountSourceID;
+	AccountID accountID;
+
+	union switch(int v){
+	case 0:
+		void;
+	}
+	ext;
+};
+
 struct DataEntry
 {
     AccountID accountID; // account this data belongs to
@@ -226,6 +239,8 @@ struct LedgerEntry
         OfferEntry offer;
     case DATA:
         DataEntry data;
+	case ALIAS:
+		AliasEntry alias;
     }
     data;
 
