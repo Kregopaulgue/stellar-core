@@ -759,6 +759,9 @@
     <ClCompile Include="..\..\..\..\AliasFrame.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\transactions\CreateAliasOpFrame.cpp">
+      <Filter>transactions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\ledger\LedgerManager.h">
@@ -1326,6 +1329,9 @@
       <Filter>transactions\tests</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ledger\AliasFrame.h" />
+    <ClInclude Include="..\..\src\transactions\CreateAliasOpFrame.h">
+      <Filter>transactions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\AUTHORS" />

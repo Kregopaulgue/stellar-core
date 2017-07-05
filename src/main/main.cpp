@@ -694,10 +694,10 @@ int testInfo(char *arg) {
 
 int main(int argc, char **argv) {
 	//newDataBaseMain(argv[0]);
-	//testInfo(argv[0]);
+	testInfo(argv[0]);
 	//forceMain(argv[0]);
 	//commonMain(argv[0]);
-	testInfo(argv[0]);
+	//testInfo(argv[0]);
 	return 0;
 }
 

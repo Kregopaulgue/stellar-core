@@ -23,7 +23,8 @@ namespace stellar {
 	private:
 		AliasEntry &mAlias;
 		AliasFrame(AliasFrame const& from);
-
+		static const char* aliasAndAccountSelector;
+		bool checkExistAccountWithIdAlias(AccountID const& accountID);
 	public:
 		typedef std::shared_ptr<AliasFrame> pointer;
 
@@ -40,15 +41,26 @@ namespace stellar {
 
 		~AliasFrame();
 
+		AliasEntry&
+			getAlias()
+		{
+			clearCached();
+			return mAlias;
+		}
+
 		virtual void storeDelete(LedgerDelta& delta, Database& db) const;
 		virtual void storeAdd(LedgerDelta& delta, Database& db);
 		virtual void storeChange(LedgerDelta& delta, Database& db);
 
 
+		static AliasFrame::pointer loadAlias(LedgerDelta& delta, AccountID const& accountID, Database& db);
+
+		static AliasFrame::pointer loadAlias(AccountID const& accountID, AccountID const& accountSourceID, Database& db);
+
 		static void storeDelete(LedgerDelta& delta, Database& db, LedgerKey const& key);
 		static void dropAll(Database& db);
 		static const char* kSQLCreateStatement1;
-
+		static const char* aliasColumSelector;
 	};
 }
 

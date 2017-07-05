@@ -30,6 +30,8 @@ TEST_CASE("exist trust", "[tx][existtrustline]") {
 	auto testAcc = TestAccount::createRoot(app);
 
 	auto a1 = testAcc.create("aaaa", 100000000000);
+	LOG(INFO) << KeyUtils::toStrKey(a1.getPublicKey()).c_str();
+	//LOG(INFO) << KeyUtils::toStrKey(a1.getSecretKey()).value.c_str();
 	//auto a2 = testAcc.create("aaaa1", 1);
 
 }

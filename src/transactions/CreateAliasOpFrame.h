@@ -1,6 +1,7 @@
 #pragma once
 
 #include "transactions\OperationFrame.h"
+#include "util/Logging.h"
 
 namespace stellar {
 	class CreateAliasOpFrame : public OperationFrame {
@@ -10,6 +11,8 @@ namespace stellar {
 		{
 			return mResult.tr().createAliasResult();
 		}
+
+		bool checkExistAccountWithIdAlias(AccountID const& accountID); //delete this
 		CreateAliasOp const& mCreateAlias;
 	public:
 		CreateAliasOpFrame(Operation const& op, OperationResult& res,
