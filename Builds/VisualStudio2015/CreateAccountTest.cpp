@@ -41,13 +41,13 @@ TEST_CASE("exist trust", "[tx][existtrustline]") {
 	int64 b1Balance = b1.getBalance();
 	LOG(INFO) << b1Balance;
 	auto txFrame = a1.tx({ payment(b1,200000) });
-	for_all_versions(app, [&]{
-		auto res = applyCheck(txFrame, app);
-		REQUIRE(txFrame->getResultCode() == txSUCCESS);
-		LOG(INFO) << res;
-		REQUIRE(loadAccount(b1, app));
-		LOG(INFO) << b1.getBalance();
-	});
+
+	auto res = applyCheck(txFrame, app);
+	REQUIRE(txFrame->getResultCode() == txSUCCESS);
+	LOG(INFO) << res;
+	REQUIRE(loadAccount(b1, app));
+	LOG(INFO) << b1.getBalance();
+
 	//LOG(INFO) << KeyUtils::toStrKey(a1.getSecretKey()).value.c_str();
 	//auto a2 = testAcc.create("aaaa1", 1);
 
