@@ -9,6 +9,7 @@
 #include "ledger/LedgerDelta.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
+#include "ledger/AliasFrame.h"
 #include "main/Application.h"
 #include "medida/meter.h"
 #include "medida/metrics_registry.h"
@@ -48,9 +49,11 @@ PaymentOpFrame::doApply(Application& app, LedgerDelta& delta,
         return true;
     }
 
+	Database& db = app.getDatabase();
+
     // build a pathPaymentOp
     Operation op;
-    op.sourceAccount = mOperation.sourceAccount;
+	op.sourceAccount = mOperation.sourceAccount;
     op.body.type(PATH_PAYMENT);
     PathPaymentOp& ppOp = op.body.pathPaymentOp();
     ppOp.sendAsset = mPayment.asset;
@@ -60,13 +63,23 @@ PaymentOpFrame::doApply(Application& app, LedgerDelta& delta,
     ppOp.sendMax = mPayment.amount;
 
     ppOp.destination = mPayment.destination;
+	AccountFrame::pointer destination =
+		AccountFrame::loadAccount(delta, mPayment.destination, db);
+
+	AliasFrame::pointer	destinationAlias = AliasFrame::loadAlias(delta, mPayment.destination, db);
+
+	if (!destination) {
+		destination = AccountFrame::loadAccount(delta, destinationAlias->getAlias().accountSourceID, db);
+	}
+
+	ppOp.destination = destination->getID();
 
     OperationResult opRes;
     opRes.code(opINNER);
     opRes.tr().type(PATH_PAYMENT);
     PathPaymentOpFrame ppayment(op, opRes, mParentTx);
     ppayment.setSourceAccountPtr(mSourceAccount);
-
+	LOG(INFO) << KeyUtils::toStrKey(ppOp.destination);
     if (!ppayment.doCheckValid(app) ||
         !ppayment.doApply(app, delta, ledgerManager))
     {

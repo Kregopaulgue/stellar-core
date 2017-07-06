@@ -16,7 +16,6 @@
 *.ilk
 *.opensdf
 *.sdf
-*.suo
 *.trs
 *.db
 
