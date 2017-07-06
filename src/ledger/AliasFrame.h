@@ -52,7 +52,13 @@ namespace stellar {
 		virtual void storeAdd(LedgerDelta& delta, Database& db);
 		virtual void storeChange(LedgerDelta& delta, Database& db);
 
+		bool isValid() { // TODO: make check
+			return true; 
+		}
 
+		static bool AliasFrame::exists(Database& db, LedgerKey const& key);
+		static bool AliasFrame::isExist(AccountID const& aliasID, AccountID const& sourceAccountID, Database& db);
+		static bool isAliasIdExist(AccountID const & aliasID, Database & db);
 		static AliasFrame::pointer loadAlias(LedgerDelta& delta, AccountID const& accountID, Database& db);
 
 		static AliasFrame::pointer loadAlias(AccountID const& accountID, AccountID const& accountSourceID, Database& db);

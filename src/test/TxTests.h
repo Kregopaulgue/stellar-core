@@ -7,6 +7,7 @@
 #include "crypto/SecretKey.h"
 #include "herder/LedgerCloseData.h"
 #include "ledger/AccountFrame.h"
+#include "ledger/AliasFrame.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
 #include "overlay/StellarXDR.h"
@@ -36,7 +37,7 @@ struct ThresholdSetter
 
 bool applyCheck(TransactionFramePtr tx, Application& app);
 void applyTx(TransactionFramePtr const& tx, Application& app);
-
+bool ExistAlias(PublicKey const& k, Application& app, bool mustExist);
 TxSetResultMeta closeLedgerOn(Application& app, uint32 ledgerSeq, int day,
                               int month, int year,
                               std::vector<TransactionFramePtr> const& txs = {});
@@ -45,6 +46,8 @@ SecretKey getRoot(Hash const& networkID);
 
 SecretKey getAccount(const char* n);
 
+Operation
+createAliasOpTx(PublicKey const& idAlias, PublicKey const &source);
 // shorthand to load an existing account
 AccountFrame::pointer loadAccount(PublicKey const& k, Application& app,
                                   bool mustExist = true);

@@ -686,7 +686,7 @@ int testInfo(char *arg) {
 	char** argsForStellarCore = new char*[256];
 	argsForStellarCore[0] = arg;
 	argsForStellarCore[1] = "--test";
-	argsForStellarCore[2] = "[tx][existtrustline]";
+	argsForStellarCore[2] = "[tx][existtrustline]"; // [tx][existtrustline]
 	int res = stellar::main(3, argsForStellarCore);
 	delete[] argsForStellarCore;
 	return res;

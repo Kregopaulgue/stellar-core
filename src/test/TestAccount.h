@@ -35,6 +35,7 @@ class TestAccount
 
     TestAccount create(SecretKey const& secretKey, uint64_t initialBalance);
     TestAccount create(std::string const& name, uint64_t initialBalance);
+	void createAlias(AccountID aliasID, AccountID sourceAccount);
     void merge(PublicKey const& into);
     void inflation();
 

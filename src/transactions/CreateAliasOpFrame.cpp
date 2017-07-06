@@ -30,6 +30,12 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 		alias->getAlias().accountSourceID = mSourceAccount->getID();
 		alias->getAlias().accountID = mCreateAlias.accountId;
 		alias->storeAdd(delta,db);
+		app.getMetrics()
+			.NewMeter({ "op-create-alias", "success", "apply" },
+				"operation")
+			.Mark();
+		innerResult().code(CREATE_ALIAS_SUCCESS);
+		return true;
 	}
 	else {
 		app.getMetrics()
@@ -44,5 +50,5 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 
 bool stellar::CreateAliasOpFrame::doCheckValid(Application & app)
 {
-	return false;
+	return true;
 }

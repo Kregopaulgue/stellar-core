@@ -17,6 +17,7 @@
 #include "transactions/AllowTrustOpFrame.h"
 #include "transactions/ChangeTrustOpFrame.h"
 #include "transactions/CreateAccountOpFrame.h"
+#include "transactions/CreateAliasOpFrame.h"
 #include "transactions/InflationOpFrame.h"
 #include "transactions/ManageDataOpFrame.h"
 #include "transactions/ManageOfferOpFrame.h"
@@ -184,6 +185,16 @@ loadAccount(PublicKey const& k, Application& app, bool mustExist)
     return res;
 }
 
+
+bool ExistAlias(PublicKey const& k, Application& app, bool mustExist) 
+{
+	auto res = AliasFrame::isAliasIdExist(k, app.getDatabase());
+	if (mustExist) {
+		REQUIRE(res);
+	}
+	return res;
+}
+
 void
 requireNoAccount(PublicKey const& k, Application& app)
 {
@@ -265,6 +276,15 @@ allowTrust(PublicKey const& trustor, Asset const& asset,
     op.body.allowTrustOp().authorize = authorize;
 
     return op;
+}
+
+Operation
+createAliasOpTx(PublicKey const& idAlias, PublicKey const &source) {
+	Operation op;
+	op.body.type(CREATE_ALIAS);
+	op.body.createAliasOp().accountId = idAlias;
+	op.body.createAliasOp().sourceId = source;
+	return op;
 }
 
 Operation

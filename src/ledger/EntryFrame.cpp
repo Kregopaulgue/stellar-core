@@ -14,6 +14,7 @@
 #include "ledger/AliasFrame.h"
 #include "xdrpp/marshal.h"
 #include "xdrpp/printer.h"
+#include "util/Logging.h"
 
 namespace stellar
 {
@@ -38,6 +39,8 @@ EntryFrame::FromXDR(LedgerEntry const& from)
     case DATA:
         res = std::make_shared<DataFrame>(from);
         break;
+	case ALIAS:
+		res = std::make_shared<AliasFrame>(from);
     }
     return res;
 }
@@ -74,6 +77,13 @@ EntryFrame::storeLoad(LedgerKey const& key, Database& db)
             DataFrame::loadData(data.accountID, data.dataName, db));
     }
     break;
+	case ALIAS:
+	{
+		auto const& alias = key.alias();
+		res = std::static_pointer_cast<EntryFrame>(
+			AliasFrame::loadAlias(alias.accountID, alias.accountSourceID, db));
+	}
+	break;
     }
     return res;
 }
@@ -154,7 +164,10 @@ EntryFrame::checkAgainstDatabase(LedgerEntry const& entry, Database& db)
     auto key = LedgerEntryKey(entry);
     flushCachedEntry(key, db);
     auto const& fromDb = EntryFrame::storeLoad(key, db);
-    if (fromDb->mEntry == entry)
+	if (fromDb == nullptr) {
+		throw("NullReferenceException");
+	}
+    if (fromDb->mEntry == entry) // not equel
     {
         return {};
     }
@@ -212,6 +225,8 @@ EntryFrame::exists(Database& db, LedgerKey const& key)
         return OfferFrame::exists(db, key);
     case DATA:
         return DataFrame::exists(db, key);
+	case ALIAS:
+		return AliasFrame::exists(db, key);
     default:
         abort();
     }
@@ -270,7 +285,7 @@ LedgerEntryKey(LedgerEntry const& e)
         k.data().accountID = d.data().accountID;
         k.data().dataName = d.data().dataName;
         break;
-	case ALIAS:   // my_change: I add new Entry (Alias), where will i get second id? 
+	case ALIAS:   // my_change
 		k.type(ALIAS);
 		k.alias().accountSourceID = d.alias().accountSourceID;
 		k.alias().accountID = d.alias().accountID;

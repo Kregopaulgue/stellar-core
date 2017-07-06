@@ -9,6 +9,7 @@
 #include "ledger/LedgerDelta.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
+#include "ledger/AliasFrame.h"
 #include "util/Logging.h"
 #include <algorithm>
 
@@ -67,6 +68,12 @@ PathPaymentOpFrame::doApply(Application& app, LedgerDelta& delta,
     {
         destination =
             AccountFrame::loadAccount(delta, mPathPayment.destination, db);
+
+		AliasFrame::pointer	destinationAlias = AliasFrame::loadAlias(delta, mPathPayment.destination, db);
+		
+		if (!destination) {
+			destination = AccountFrame::loadAccount(delta, destinationAlias->getAlias().accountSourceID, db);
+		}
 
         if (!destination)
         {
