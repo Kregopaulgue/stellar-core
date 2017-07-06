@@ -446,258 +446,259 @@ namespace stellar
 }
 
 
-namespace stellar {
-	int
-		main(int argc, char* const* argv)
+int
+main(int argc, char* const* argv)
+{
+	using namespace stellar;
+
+	sodium_init();
+	Logging::init();
+
+	std::string cfgFile("stellar-core.cfg");
+	std::string command;
+	el::Level logLevel = el::Level::Info;
+	std::vector<char*> rest;
+
+	optional<bool> forceSCP = nullptr;
+	bool base64 = false;
+	bool catchupComplete = false;
+	bool inferQuorum = false;
+	bool checkQuorum = false;
+	bool graphQuorum = false;
+	bool newDB = false;
+	bool getOfflineInfo = false;
+	std::string loadXdrBucket = "";
+	std::vector<std::string> newHistories;
+	std::vector<std::string> metrics;
+	system("pwd");
+	int opt;
+	while ((opt = getopt_long_only(argc, argv, "c:", stellar_core_options,
+		nullptr)) != -1)
 	{
-		using namespace stellar;
-
-		sodium_init();
-		Logging::init();
-
-		std::string cfgFile("stellar-core.cfg");
-		std::string command;
-		el::Level logLevel = el::Level::Info;
-		std::vector<char*> rest;
-
-		optional<bool> forceSCP = nullptr;
-		bool base64 = false;
-		bool catchupComplete = false;
-		bool inferQuorum = false;
-		bool checkQuorum = false;
-		bool graphQuorum = false;
-		bool newDB = false;
-		bool getOfflineInfo = false;
-		std::string loadXdrBucket = "";
-		std::vector<std::string> newHistories;
-		std::vector<std::string> metrics;
-		system("pwd");
-		int opt;
-		while ((opt = getopt_long_only(argc, argv, "c:", stellar_core_options,
-			nullptr)) != -1)
+		switch (opt)
 		{
-			switch (opt)
-			{
-			case OPT_BASE64:
-				base64 = true;
-				break;
-			case OPT_CATCHUP_COMPLETE:
-				catchupComplete = true;
-				break;
-			case 'c':
-			case OPT_CMD:
-				command = optarg;
-				rest.insert(rest.begin(), argv + optind, argv + argc);
-				optind = argc;
-				break;
-			case OPT_CONF:
-				cfgFile = std::string(optarg);
-				break;
-			case OPT_CONVERTID:
-				StrKeyUtils::logKey(std::cout, std::string(optarg));
-				return 0;
-			case OPT_DUMPXDR:
-				dumpxdr(std::string(optarg));
-				return 0;
-			case OPT_PRINTTXN:
-				printtxn(std::string(optarg), base64);
-				return 0;
-			case OPT_SIGNTXN:
-				signtxn(std::string(optarg), base64);
-				return 0;
-			case OPT_SEC2PUB:
-				priv2pub();
-				return 0;
-			case OPT_NETID:
-				signtxn_network_id = optarg;
-				return 0;
-			case OPT_LOADXDR:
-				loadXdrBucket = std::string(optarg);
-				break;
-			case OPT_FORCESCP:
-				forceSCP = make_optional<bool>(optarg == nullptr ||
-					string(optarg) == "true");
-				break;
-			case OPT_FUZZ:
-				fuzz(std::string(optarg), logLevel, metrics);
-				return 0;
-			case OPT_GENFUZZ:
-				genfuzz(std::string(optarg));
-				return 0;
-			case OPT_GENSEED:
-			{
-				SecretKey key = SecretKey::random();
-				std::cout << "Secret seed: " << key.getStrKeySeed().value << std::endl;
-				std::cout << "Public: " << key.getStrKeyPublic() << std::endl;
-				return 0;
-			}
-			case OPT_INFERQUORUM:
-				inferQuorum = true;
-				break;
-			case OPT_CHECKQUORUM:
-				checkQuorum = true;
-				break;
-			case OPT_GRAPHQUORUM:
-				graphQuorum = true;
-				break;
-			case OPT_OFFLINEINFO:
-				getOfflineInfo = true;
-				break;
-			case OPT_LOGLEVEL:
-				logLevel = Logging::getLLfromString(std::string(optarg));
-				break;
-			case OPT_METRIC:
-				metrics.push_back(std::string(optarg));
-				break;
-			case OPT_NEWDB:
-				newDB = true;
-				break;
-			case OPT_NEWHIST:
-				newHistories.push_back(std::string(optarg));
-				break;
-			case OPT_TEST:
-			{
-				rest.push_back(*argv);
-				rest.insert(++rest.begin(), argv + optind, argv + argc);
-				return test(static_cast<int>(rest.size()), &rest[0], logLevel,
-					metrics);
-			}
-			case OPT_VERSION:
-				std::cout << STELLAR_CORE_VERSION << std::endl;
-				return 0;
-			case OPT_HELP:
-			default:
-				usage(0);
-				return 0;
-			}
-		}
-
-		Config cfg;
-		try
+		case OPT_BASE64:
+			base64 = true;
+			break;
+		case OPT_CATCHUP_COMPLETE:
+			catchupComplete = true;
+			break;
+		case 'c':
+		case OPT_CMD:
+			command = optarg;
+			rest.insert(rest.begin(), argv + optind, argv + argc);
+			optind = argc;
+			break;
+		case OPT_CONF:
+			cfgFile = std::string(optarg);
+			break;
+		case OPT_CONVERTID:
+			StrKeyUtils::logKey(std::cout, std::string(optarg));
+			return 0;
+		case OPT_DUMPXDR:
+			dumpxdr(std::string(optarg));
+			return 0;
+		case OPT_PRINTTXN:
+			printtxn(std::string(optarg), base64);
+			return 0;
+		case OPT_SIGNTXN:
+			signtxn(std::string(optarg), base64);
+			return 0;
+		case OPT_SEC2PUB:
+			priv2pub();
+			return 0;
+		case OPT_NETID:
+			signtxn_network_id = optarg;
+			return 0;
+		case OPT_LOADXDR:
+			loadXdrBucket = std::string(optarg);
+			break;
+		case OPT_FORCESCP:
+			forceSCP = make_optional<bool>(optarg == nullptr ||
+				string(optarg) == "true");
+			break;
+		case OPT_FUZZ:
+			fuzz(std::string(optarg), logLevel, metrics);
+			return 0;
+		case OPT_GENFUZZ:
+			genfuzz(std::string(optarg));
+			return 0;
+		case OPT_GENSEED:
 		{
-			// yes you really have to do this 3 times
-			Logging::setLogLevel(logLevel, nullptr);
-			if (cfgFile == "-" || fs::exists(cfgFile))
-			{
-				cfg.load(cfgFile);
-			}
-			else
-			{
-				std::string s;
-				s = "No config file ";
-				s += cfgFile + " found";
-				throw std::invalid_argument(s);
-			}
-			Logging::setFmt(KeyUtils::toShortString(cfg.NODE_SEED.getPublicKey()));
-			Logging::setLogLevel(logLevel, nullptr);
-
-			if (command.size())
-			{
-				sendCommand(command, rest, cfg.HTTP_PORT);
-				return 0;
-			}
-
-			// don't log to file if just sending a command
-			if (cfg.LOG_FILE_PATH.size())
-				Logging::setLoggingToFile(cfg.LOG_FILE_PATH);
-			Logging::setLogLevel(logLevel, nullptr);
-
-			cfg.REPORT_METRICS = metrics;
-
-			if (forceSCP || newDB || getOfflineInfo || !loadXdrBucket.empty() ||
-				inferQuorum || graphQuorum || checkQuorum || catchupComplete)
-			{
-				setNoListen(cfg);
-				if (newDB)
-					initializeDatabase(cfg);
-				if (catchupComplete)
-					catchup(cfg);
-				if (forceSCP)
-					setForceSCPFlag(cfg, *forceSCP);
-				if (getOfflineInfo)
-					showOfflineInfo(cfg);
-				if (!loadXdrBucket.empty())
-					loadXdr(cfg, loadXdrBucket);
-				if (inferQuorum)
-					inferQuorumAndWrite(cfg);
-				if (checkQuorum)
-					checkQuorumIntersection(cfg);
-				if (graphQuorum)
-					writeQuorumGraph(cfg);
-				return 0;
-			}
-			else if (!newHistories.empty())
-			{
-				setNoListen(cfg);
-				return initializeHistories(cfg, newHistories);
-			}
-
-			if (cfg.MANUAL_CLOSE)
-			{
-				// in manual close mode, we set FORCE_SCP
-				// so that the node starts fully in sync
-				// (this is to avoid to force scp all the time when testing)
-				cfg.FORCE_SCP = true;
-			}
+			SecretKey key = SecretKey::random();
+			std::cout << "Secret seed: " << key.getStrKeySeed().value << std::endl;
+			std::cout << "Public: " << key.getStrKeyPublic() << std::endl;
+			return 0;
 		}
-		catch (std::exception& e)
+		case OPT_INFERQUORUM:
+			inferQuorum = true;
+			break;
+		case OPT_CHECKQUORUM:
+			checkQuorum = true;
+			break;
+		case OPT_GRAPHQUORUM:
+			graphQuorum = true;
+			break;
+		case OPT_OFFLINEINFO:
+			getOfflineInfo = true;
+			break;
+		case OPT_LOGLEVEL:
+			logLevel = Logging::getLLfromString(std::string(optarg));
+			break;
+		case OPT_METRIC:
+			metrics.push_back(std::string(optarg));
+			break;
+		case OPT_NEWDB:
+			newDB = true;
+			break;
+		case OPT_NEWHIST:
+			newHistories.push_back(std::string(optarg));
+			break;
+		case OPT_TEST:
 		{
-			LOG(FATAL) << "Got an exception: " << e.what();
-			return 1;
+			rest.push_back(*argv);
+			rest.insert(++rest.begin(), argv + optind, argv + argc);
+			return test(static_cast<int>(rest.size()), &rest[0], logLevel,
+				metrics);
 		}
-		// run outside of catch block so that we properly capture crashes
-		return startApp(cfgFile, cfg);
+		case OPT_VERSION:
+			std::cout << STELLAR_CORE_VERSION << std::endl;
+			return 0;
+		case OPT_HELP:
+		default:
+			usage(0);
+			return 0;
+		}
 	}
+
+	Config cfg;
+	try
+	{
+		// yes you really have to do this 3 times
+		Logging::setLogLevel(logLevel, nullptr);
+		if (cfgFile == "-" || fs::exists(cfgFile))
+		{
+			cfg.load(cfgFile);
+		}
+		else
+		{
+			std::string s;
+			s = "No config file ";
+			s += cfgFile + " found";
+			throw std::invalid_argument(s);
+		}
+		Logging::setFmt(KeyUtils::toShortString(cfg.NODE_SEED.getPublicKey()));
+		Logging::setLogLevel(logLevel, nullptr);
+
+		if (command.size())
+		{
+			sendCommand(command, rest, cfg.HTTP_PORT);
+			return 0;
+		}
+
+		// don't log to file if just sending a command
+		if (cfg.LOG_FILE_PATH.size())
+			Logging::setLoggingToFile(cfg.LOG_FILE_PATH);
+		Logging::setLogLevel(logLevel, nullptr);
+
+		cfg.REPORT_METRICS = metrics;
+
+		if (forceSCP || newDB || getOfflineInfo || !loadXdrBucket.empty() ||
+			inferQuorum || graphQuorum || checkQuorum || catchupComplete)
+		{
+			setNoListen(cfg);
+			if (newDB)
+				initializeDatabase(cfg);
+			if (catchupComplete)
+				catchup(cfg);
+			if (forceSCP)
+				setForceSCPFlag(cfg, *forceSCP);
+			if (getOfflineInfo)
+				showOfflineInfo(cfg);
+			if (!loadXdrBucket.empty())
+				loadXdr(cfg, loadXdrBucket);
+			if (inferQuorum)
+				inferQuorumAndWrite(cfg);
+			if (checkQuorum)
+				checkQuorumIntersection(cfg);
+			if (graphQuorum)
+				writeQuorumGraph(cfg);
+			return 0;
+		}
+		else if (!newHistories.empty())
+		{
+			setNoListen(cfg);
+			return initializeHistories(cfg, newHistories);
+		}
+
+		if (cfg.MANUAL_CLOSE)
+		{
+			// in manual close mode, we set FORCE_SCP
+			// so that the node starts fully in sync
+			// (this is to avoid to force scp all the time when testing)
+			cfg.FORCE_SCP = true;
+		}
+	}
+	catch (std::exception& e)
+	{
+		LOG(FATAL) << "Got an exception: " << e.what();
+		return 1;
+	}
+	// run outside of catch block so that we properly capture crashes
+	return startApp(cfgFile, cfg);
 }
+
+
 //
-int forceMain(char *arg) {
-	char** argsForStellarCore = new char*[256];
-	argsForStellarCore[0] = arg;
-	argsForStellarCore[1] = "--forcescp";
-	argsForStellarCore[2] = "--conf";
-	argsForStellarCore[3] = "stellar-core.cfg";
-	int res = stellar::main(4, argsForStellarCore);
-	delete[] argsForStellarCore;
-	return res;
-}
+////
+//int forceMain(char *arg) {
+//	char** argsForStellarCore = new char*[256];
+//	argsForStellarCore[0] = arg;
+//	argsForStellarCore[1] = "--forcescp";
+//	argsForStellarCore[2] = "--conf";
+//	argsForStellarCore[3] = "stellar-core.cfg";
+//	int res = stellar::main(4, argsForStellarCore);
+//	delete[] argsForStellarCore;
+//	return res;
+//}
+//
+//int commonMain(char *arg) {
+//	char** argsForStellarCore = new char*[256];
+//	argsForStellarCore[0] = arg;
+//	argsForStellarCore[1] = "--conf";
+//	argsForStellarCore[2] = "stellar-core.cfg";
+//	int res = stellar::main(3, argsForStellarCore);
+//	delete[] argsForStellarCore;
+//	return res;
+//}
+//
+//int newDataBaseMain(char *arg) {
+//	char** argsForStellarCore = new char*[256];
+//	argsForStellarCore[0] = arg;
+//	argsForStellarCore[1] = "--newdb";
+//	argsForStellarCore[2] = "--conf";
+//	argsForStellarCore[3] = "stellar-core.cfg";
+//	int res = stellar::main(4, argsForStellarCore);
+//	delete[] argsForStellarCore;
+//	return res;
+//}
+//
+//int testInfo(char *arg) {
+//	char** argsForStellarCore = new char*[256];
+//	argsForStellarCore[0] = arg;
+//	argsForStellarCore[1] = "--test";
+//	argsForStellarCore[2] = "[tx][existtrustline]"; // [tx][existtrustline][tx][existtrustline]
+//	int res = stellar::main(3, argsForStellarCore);
+//	delete[] argsForStellarCore;
+//	return res;
+//}
 
-int commonMain(char *arg) {
-	char** argsForStellarCore = new char*[256];
-	argsForStellarCore[0] = arg;
-	argsForStellarCore[1] = "--conf";
-	argsForStellarCore[2] = "stellar-core.cfg";
-	int res = stellar::main(3, argsForStellarCore);
-	delete[] argsForStellarCore;
-	return res;
-}
-
-int newDataBaseMain(char *arg) {
-	char** argsForStellarCore = new char*[256];
-	argsForStellarCore[0] = arg;
-	argsForStellarCore[1] = "--newdb";
-	argsForStellarCore[2] = "--conf";
-	argsForStellarCore[3] = "stellar-core.cfg";
-	int res = stellar::main(4, argsForStellarCore);
-	delete[] argsForStellarCore;
-	return res;
-}
-
-int testInfo(char *arg) {
-	char** argsForStellarCore = new char*[256];
-	argsForStellarCore[0] = arg;
-	argsForStellarCore[1] = "--test";
-	argsForStellarCore[2] = "[tx][existtrustline]"; // [tx][existtrustline]
-	int res = stellar::main(3, argsForStellarCore);
-	delete[] argsForStellarCore;
-	return res;
-}
-
-int main(int argc, char **argv) {
-	//newDataBaseMain(argv[0]);
-	testInfo(argv[0]);
-	//forceMain(argv[0]);
-	//commonMain(argv[0]);
-	//testInfo(argv[0]);
-	return 0;
-}
+//int main(int argc, char **argv) {
+//	//newDataBaseMain(argv[0]);
+//	testInfo(argv[0]);
+//	//forceMain(argv[0]);
+//	//commonMain(argv[0]);
+//	//testInfo(argv[0]);
+//	return 0;
+//}
 
