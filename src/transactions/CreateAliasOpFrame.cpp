@@ -27,7 +27,7 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 
 	if (!alias) {
 		alias = std::make_shared<AliasFrame>();
-		alias->getAlias().accountSourceID = mSourceAccount->getID();
+		alias->getAlias().accountSourceID = mCreateAlias.sourceId;
 		alias->getAlias().accountID = mCreateAlias.accountId;
 		alias->storeAdd(delta,db);
 		app.getMetrics()

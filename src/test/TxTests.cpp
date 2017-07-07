@@ -279,7 +279,7 @@ allowTrust(PublicKey const& trustor, Asset const& asset,
 }
 
 Operation
-createAliasOpTx(PublicKey const& idAlias, PublicKey const &source) {
+createAliasOpTx(AccountID const& idAlias, AccountID const &source) {
 	Operation op;
 	op.body.type(CREATE_ALIAS);
 	op.body.createAliasOp().accountId = idAlias;

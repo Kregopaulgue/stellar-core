@@ -47,7 +47,7 @@ SecretKey getRoot(Hash const& networkID);
 SecretKey getAccount(const char* n);
 
 Operation
-createAliasOpTx(PublicKey const& idAlias, PublicKey const &source);
+createAliasOpTx(AccountID const& idAlias, AccountID const &source);
 // shorthand to load an existing account
 AccountFrame::pointer loadAccount(PublicKey const& k, Application& app,
                                   bool mustExist = true);

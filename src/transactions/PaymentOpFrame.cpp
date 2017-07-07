@@ -51,6 +51,7 @@ PaymentOpFrame::doApply(Application& app, LedgerDelta& delta,
 
 	Database& db = app.getDatabase();
 
+
     // build a pathPaymentOp
     Operation op;
 	op.sourceAccount = mOperation.sourceAccount;
@@ -63,16 +64,15 @@ PaymentOpFrame::doApply(Application& app, LedgerDelta& delta,
     ppOp.sendMax = mPayment.amount;
 
     ppOp.destination = mPayment.destination;
-	AccountFrame::pointer destination =
-		AccountFrame::loadAccount(delta, mPayment.destination, db);
 
-	AliasFrame::pointer	destinationAlias = AliasFrame::loadAlias(delta, mPayment.destination, db);
-
-	if (!destination) {
-		destination = AccountFrame::loadAccount(delta, destinationAlias->getAlias().accountSourceID, db);
+	AccountFrame::pointer destinationAccount = AccountFrame::loadAccount(delta, mPayment.destination, db);
+	if (!destinationAccount) {
+		AliasFrame::pointer destinationAlias = AliasFrame::loadAlias(delta, mPayment.destination, db);
+		if (destinationAlias) {
+			ppOp.destination = destinationAlias->getAlias().accountSourceID;
+			LOG(INFO) << KeyUtils::toStrKey(destinationAlias->getAlias().accountSourceID);
+		}
 	}
-
-	ppOp.destination = destination->getID();
 
     OperationResult opRes;
     opRes.code(opINNER);
