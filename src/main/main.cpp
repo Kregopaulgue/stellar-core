@@ -648,7 +648,6 @@ main(int argc, char* const* argv)
 	return startApp(cfgFile, cfg);
 }
 
-
 //
 ////
 //int forceMain(char *arg) {
@@ -695,9 +694,9 @@ main(int argc, char* const* argv)
 
 //int main(int argc, char **argv) {
 //	//newDataBaseMain(argv[0]);
-//	testInfo(argv[0]);
-//	//forceMain(argv[0]);
-//	//commonMain(argv[0]);
+//	//testInfo(argv[0]);
+//	forceMain(argv[0]);
+//	commonMain(argv[0]);
 //	//testInfo(argv[0]);
 //	return 0;
 //}

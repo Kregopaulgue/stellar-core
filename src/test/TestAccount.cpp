@@ -110,12 +110,7 @@ void TestAccount::createAlias(AccountID aliasID, AccountID sourceAccount)
 	{
 		LOG(INFO) << "ERROR createAlias";
 	}
-	LOG(INFO) << "SourceID in createAlias" << KeyUtils::toStrKey(sourceAccount);
 	AliasFrame::pointer al = AliasFrame::loadAlias(aliasID, sourceAccount, mApp.getDatabase());
-	LOG(INFO) << "AliasID accountSourceID: " << KeyUtils::toStrKey(al->getAlias().accountSourceID);
-
-	LOG(INFO) << ExistAlias(aliasID, mApp, true);
-	LOG(INFO) << ExistAlias(SecretKey().random().getPublicKey() , mApp, false);
 	REQUIRE(ExistAlias(aliasID, mApp, true));
 }
 

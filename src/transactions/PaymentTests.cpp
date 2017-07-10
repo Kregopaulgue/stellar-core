@@ -149,55 +149,47 @@ TEST_CASE("payment", "[tx][payment]")
 
 	SECTION("Create account")
 	{
-
-
-		SECTION("a pays b, then a merge into b")
-		{
-			auto rA = root.create("rrrA", 10000000000000000);
-
-			auto paymentAmount = 1000000;
-			auto amount = app.getLedgerManager().getMinBalance(0) + paymentAmount;
-			auto secretKeyForB1 = SecretKey().random();
-			auto b1 = root.create(secretKeyForB1, 10000000000);
-			LOG(INFO) << "b1 PublicKey " << KeyUtils::toStrKey(secretKeyForB1.getPublicKey());
-			PublicKey &aliasID = SecretKey().random().getPublicKey();
-			root.createAlias(aliasID, secretKeyForB1.getPublicKey());
-			int64 a1Balance = rA.getBalance();
-			int64 b1Balance = b1.getBalance();
-
-			auto txFrame = rA.tx(
-			{ payment(aliasID, 200) });
-
-			LOG(INFO) << b1Balance;
-			auto res = applyCheck(txFrame, app);
-			LOG(INFO) << res;
-			/*REQUIRE(loadAccount(a1, app, true));
-			REQUIRE(loadAccount(b1, app));
-			REQUIRE(txFrame->getResultCode() == txSUCCESS);
-			REQUIRE(!loadAccount(a1, app, false));
-			REQUIRE((a1Balance + b1Balance - txFrame->getFee()) ==
-				b1.getBalance());*/
-			LOG(INFO) << b1.getBalance();
-
-		}
+		auto fixAmount = 10000000000000000;
 
 		SECTION("a pays b, use alias")
 		{
-			auto paymentAmount = 1000000;
-			auto amount = app.getLedgerManager().getMinBalance(0) + paymentAmount;
-			auto b1 = root.create("B", 1000000000000);
-			AccountID aliasID = SecretKey().random().getPublicKey();
-			root.createAlias(aliasID, b1.getPublicKey());
-			int64 a1Balance = a1.getBalance();
+			auto rA = root.create("rrrA", fixAmount);
+			auto secretKeyForB1 = SecretKey().random();
+			auto b1 = root.create(secretKeyForB1, fixAmount);
+			PublicKey &aliasID = SecretKey().random().getPublicKey();
+			root.createAlias(aliasID, secretKeyForB1.getPublicKey());
 			int64 b1Balance = b1.getBalance();
-			REQUIRE(loadAccount(b1, app));
-			auto txFrame = a1.tx({ payment(b1 ,200) });
+			LOG(INFO) << b1Balance;
+			auto payAmount = 200;
+			auto txFrame = rA.tx(
+			{ payment(aliasID, payAmount) });
 			auto res = applyCheck(txFrame, app);
-			REQUIRE(txFrame->getResultCode() == txSUCCESS);
-			LOG(INFO) << res;
-			REQUIRE(loadAccount(b1, app));
 			LOG(INFO) << b1.getBalance();
+			REQUIRE(b1Balance + payAmount == b1.getBalance());
+		}
 
+		SECTION("Try create Alias with reserve AccountID")
+		{
+			auto accountA = root.create("rrraaaa", fixAmount);
+			auto secretKeyForB1 = SecretKey().random();
+			auto b1 = root.create(secretKeyForB1, fixAmount);
+			SecretKey &aliasID = SecretKey().random();
+			root.createAlias(aliasID.getPublicKey(), secretKeyForB1.getPublicKey());
+			root.create(aliasID, fixAmount);
+		}
+
+		SECTION("Try create Account with ID reserve Alias") {
+			SecretKey &accountKey = SecretKey().random();
+			auto accountA = root.create(accountKey, fixAmount);
+			SecretKey &aliasID = SecretKey().random();
+			root.createAlias(aliasID.getPublicKey(), accountKey.getPublicKey());
+			REQUIRE_THROWS_AS(root.create(accountKey, fixAmount) , ex_CREATE_ALIAS_ALREADY_EXITS);
+		}
+
+		SECTION("Try create Alias for NOT exist account") {
+			SecretKey &accountKey = SecretKey().random();
+			
+			root.createAlias(accountKey.getPublicKey(), SecretKey().random().getPublicKey());
 		}
 
 		SECTION("Success")

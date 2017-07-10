@@ -7,7 +7,7 @@
 
 bool stellar::CreateAliasOpFrame::checkExistAccountWithIdAlias(AccountID const & accountID)
 {
-	
+
 	return false;
 }
 
@@ -23,29 +23,66 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 {
 	AliasFrame::pointer destAccount;
 	Database& db = ledgerManager.getDatabase();
+
+	if (mSourceAccount->getID == mCreateAlias.accountId) {
+		app.getMetrics()
+			.NewMeter({ "op-create-alias", "failure", "not-exist-account" },
+				"operation")
+			.Mark();
+		innerResult().code(CREATE_ALIAS_ALREAY_EXIST_ACCOUNT);
+		return false;
+	}
+
+	if (!(mSourceAccount->getID() == mCreateAlias.sourceId)) {
+		app.getMetrics()
+			.NewMeter({ "op-create-alias", "failure", "not-owner-account" },
+				"operation")
+			.Mark();
+		innerResult().code(CREATE_ALIAS_NOT_OWNER);
+		return false;
+	}
+
 	auto alias = AliasFrame::loadAlias(mCreateAlias.accountId, mCreateAlias.sourceId, db);
+	auto account = AccountFrame::loadAccount(mCreateAlias.accountId, db);
+	auto needAccount = AccountFrame::loadAccount(delta, mCreateAlias.sourceId, db);
 
-	if (!alias) {
-		alias = std::make_shared<AliasFrame>();
-		alias->getAlias().accountSourceID = mCreateAlias.sourceId;
-		alias->getAlias().accountID = mCreateAlias.accountId;
-		alias->storeAdd(delta,db);
+	if (!needAccount) {
 		app.getMetrics()
-			.NewMeter({ "op-create-alias", "success", "apply" },
+			.NewMeter({ "op-create-alias", "failure", "not-exist-account" },
 				"operation")
 			.Mark();
-		innerResult().code(CREATE_ALIAS_SUCCESS);
-		return true;
-	}
-	else {
-		app.getMetrics()
-			.NewMeter({ "op-create-account", "failure", "low-reserve" },
-				"operation")
-			.Mark();
-		innerResult().code(CREATE_ALIAS_UNDERFUNDED);
+		innerResult().code(CREATE_ALIAS_ALREAY_EXIST_ACCOUNT);
+		return false;
 	}
 
-	return false;
+	if (alias) {   // again? - Delete! 
+		app.getMetrics()
+			.NewMeter({ "op-create-alias", "failure", "already-exist" },
+				"operation")
+			.Mark();
+		innerResult().code(CREATE_ALIAS_ALREADY_EXIST);
+		return false;
+	}
+
+	if (account) {
+		app.getMetrics()
+			.NewMeter({ "op-create-alias", "failure", "already-exist-account" },
+				"operation")
+			.Mark();
+		innerResult().code(CREATE_ALIAS_ALREAY_EXIST_ACCOUNT);
+		return false;
+	}
+
+	alias = std::make_shared<AliasFrame>();
+	alias->getAlias().accountSourceID = mCreateAlias.sourceId;
+	alias->getAlias().accountID = mCreateAlias.accountId;
+	alias->storeAdd(delta, db);
+	app.getMetrics()
+		.NewMeter({ "op-create-alias", "success", "apply" },
+			"operation")
+		.Mark();
+	innerResult().code(CREATE_ALIAS_SUCCESS);
+	return true;
 }
 
 bool stellar::CreateAliasOpFrame::doCheckValid(Application & app)

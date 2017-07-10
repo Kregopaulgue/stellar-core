@@ -65,15 +65,6 @@ PaymentOpFrame::doApply(Application& app, LedgerDelta& delta,
 
     ppOp.destination = mPayment.destination;
 
-	AccountFrame::pointer destinationAccount = AccountFrame::loadAccount(delta, mPayment.destination, db);
-	if (!destinationAccount) {
-		AliasFrame::pointer destinationAlias = AliasFrame::loadAlias(delta, mPayment.destination, db);
-		if (destinationAlias) {
-			ppOp.destination = destinationAlias->getAlias().accountSourceID;
-			LOG(INFO) << KeyUtils::toStrKey(destinationAlias->getAlias().accountSourceID);
-		}
-	}
-
     OperationResult opRes;
     opRes.code(opINNER);
     opRes.tr().type(PATH_PAYMENT);

@@ -17,7 +17,6 @@ class PathPaymentOpFrame : public OperationFrame
         return mResult.tr().pathPaymentResult();
     }
     PathPaymentOp const& mPathPayment; //change without const?
-
   public:
     PathPaymentOpFrame(Operation const& op, OperationResult& res,
                        TransactionFrame& parentTx);

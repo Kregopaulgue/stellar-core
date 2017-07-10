@@ -387,7 +387,8 @@ enum CreateAccountResultCode
     CREATE_ACCOUNT_UNDERFUNDED = -2, // not enough funds in source account
     CREATE_ACCOUNT_LOW_RESERVE =
         -3, // would create an account below the min reserve
-    CREATE_ACCOUNT_ALREADY_EXIST = -4 // account already exists
+    CREATE_ACCOUNT_ALREADY_EXIST = -4, // account already exists
+	CREATE_ACCOUNT_ALREADY_EXIST_ALIAS = -5
 };
 
 union CreateAccountResult switch (CreateAccountResultCode code)
@@ -630,7 +631,9 @@ enum CreateAliasResultCode
     CREATE_ALIAS_LOW_RESERVE =
         -3, // would create an account below the min reserve
     CREATE_ALIAS_ALREADY_EXIST = -4, // account already exists
-	CREATE_ALIAS_ALREAY_EXIST_ACCOUNT = -5
+	CREATE_ALIAS_ALREAY_EXIST_ACCOUNT = -5,
+	CREATE_ALIAS_NOT_OWNER = -6,
+	CREATE_ALIAS_UNDEFINED = -7
 };
 
 union CreateAliasResult switch (CreateAliasResultCode code)

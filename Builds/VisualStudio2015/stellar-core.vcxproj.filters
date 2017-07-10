@@ -1436,9 +1436,6 @@
     <CustomBuild Include="..\..\src\xdr\Stellar-transaction.x">
       <Filter>xdr</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\src\xdr\Stellar-types.x">
-      <Filter>xdr</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\src\xdr\Stellar-overlay.x">
       <Filter>xdr</Filter>
     </CustomBuild>
@@ -1446,6 +1443,9 @@
       <Filter>xdr</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\src\xdr\Stellar-SCP.x">
+      <Filter>xdr</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\xdr\Stellar-types.x">
       <Filter>xdr</Filter>
     </CustomBuild>
   </ItemGroup>

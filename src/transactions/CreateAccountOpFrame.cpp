@@ -9,6 +9,7 @@
 #include "ledger/LedgerDelta.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
+#include "ledger/AliasFrame.h"
 #include "util/Logging.h"
 #include <algorithm>
 
@@ -40,6 +41,18 @@ namespace stellar
 
 		destAccount =
 			AccountFrame::loadAccount(delta, mCreateAccount.destination, db);
+
+		bool isReverseId = AliasFrame::isAliasIdExist(mCreateAccount.destination, db);
+
+		if (isReverseId) {
+			app.getMetrics()
+				.NewMeter({ "op-create-account", "failure", "already-exist" },
+					"operation")
+				.Mark();
+			innerResult().code(CREATE_ACCOUNT_ALREADY_EXIST);
+			return false;
+		}
+
 		if (!destAccount)
 		{
 			if (mCreateAccount.startingBalance < ledgerManager.getMinBalance(0))
