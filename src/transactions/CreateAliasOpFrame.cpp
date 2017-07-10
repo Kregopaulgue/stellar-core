@@ -24,7 +24,11 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 	AliasFrame::pointer destAccount;
 	Database& db = ledgerManager.getDatabase();
 
-	if (mSourceAccount->getID == mCreateAlias.accountId) {
+	if (mCreateAlias.accountId == mCreateAlias.sourceId) {
+
+	}
+
+	if (mSourceAccount->getID() == mCreateAlias.accountId) {
 		app.getMetrics()
 			.NewMeter({ "op-create-alias", "failure", "not-exist-account" },
 				"operation")
@@ -33,13 +37,23 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 		return false;
 	}
 
-	if (!(mSourceAccount->getID() == mCreateAlias.sourceId)) {
+	if (!(mSourceAccount->getID() == mCreateAlias.sourceId)) { //delete this
+		auto deleteAlias = AliasFrame::loadAlias(mCreateAlias.accountId, mSourceAccount->getID(), db);
+		if (!deleteAlias) {
+			app.getMetrics()
+				.NewMeter({ "op-create-alias", "failure", "not-owner-account" },
+					"operation")
+				.Mark();
+			innerResult().code(CREATE_ALIAS_NOT_OWNER);
+			return false;
+		}
+		deleteAlias->storeDelete(delta, db);
 		app.getMetrics()
-			.NewMeter({ "op-create-alias", "failure", "not-owner-account" },
+			.NewMeter({ "op-create-alias", "success", "apply" },
 				"operation")
 			.Mark();
-		innerResult().code(CREATE_ALIAS_NOT_OWNER);
-		return false;
+		innerResult().code(CREATE_ALIAS_SUCCESS);
+		return true;
 	}
 
 	auto alias = AliasFrame::loadAlias(mCreateAlias.accountId, mCreateAlias.sourceId, db);

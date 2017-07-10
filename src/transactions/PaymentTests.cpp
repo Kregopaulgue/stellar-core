@@ -149,49 +149,7 @@ TEST_CASE("payment", "[tx][payment]")
 
 	SECTION("Create account")
 	{
-		auto fixAmount = 10000000000000000;
-
-		SECTION("a pays b, use alias")
-		{
-			auto rA = root.create("rrrA", fixAmount);
-			auto secretKeyForB1 = SecretKey().random();
-			auto b1 = root.create(secretKeyForB1, fixAmount);
-			PublicKey &aliasID = SecretKey().random().getPublicKey();
-			root.createAlias(aliasID, secretKeyForB1.getPublicKey());
-			int64 b1Balance = b1.getBalance();
-			LOG(INFO) << b1Balance;
-			auto payAmount = 200;
-			auto txFrame = rA.tx(
-			{ payment(aliasID, payAmount) });
-			auto res = applyCheck(txFrame, app);
-			LOG(INFO) << b1.getBalance();
-			REQUIRE(b1Balance + payAmount == b1.getBalance());
-		}
-
-		SECTION("Try create Alias with reserve AccountID")
-		{
-			auto accountA = root.create("rrraaaa", fixAmount);
-			auto secretKeyForB1 = SecretKey().random();
-			auto b1 = root.create(secretKeyForB1, fixAmount);
-			SecretKey &aliasID = SecretKey().random();
-			root.createAlias(aliasID.getPublicKey(), secretKeyForB1.getPublicKey());
-			root.create(aliasID, fixAmount);
-		}
-
-		SECTION("Try create Account with ID reserve Alias") {
-			SecretKey &accountKey = SecretKey().random();
-			auto accountA = root.create(accountKey, fixAmount);
-			SecretKey &aliasID = SecretKey().random();
-			root.createAlias(aliasID.getPublicKey(), accountKey.getPublicKey());
-			REQUIRE_THROWS_AS(root.create(accountKey, fixAmount) , ex_CREATE_ALIAS_ALREADY_EXITS);
-		}
-
-		SECTION("Try create Alias for NOT exist account") {
-			SecretKey &accountKey = SecretKey().random();
-			
-			root.createAlias(accountKey.getPublicKey(), SecretKey().random().getPublicKey());
-		}
-
+		
 		SECTION("Success")
 		{
 			for_all_versions(app, [&] {

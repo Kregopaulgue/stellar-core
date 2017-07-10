@@ -110,8 +110,6 @@ void TestAccount::createAlias(AccountID aliasID, AccountID sourceAccount)
 	{
 		LOG(INFO) << "ERROR createAlias";
 	}
-	AliasFrame::pointer al = AliasFrame::loadAlias(aliasID, sourceAccount, mApp.getDatabase());
-	REQUIRE(ExistAlias(aliasID, mApp, true));
 }
 
 void

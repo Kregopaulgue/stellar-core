@@ -70,7 +70,6 @@ PaymentOpFrame::doApply(Application& app, LedgerDelta& delta,
     opRes.tr().type(PATH_PAYMENT);
     PathPaymentOpFrame ppayment(op, opRes, mParentTx);
     ppayment.setSourceAccountPtr(mSourceAccount);
-	LOG(INFO) << KeyUtils::toStrKey(ppOp.destination);
     if (!ppayment.doCheckValid(app) ||
         !ppayment.doApply(app, delta, ledgerManager))
     {

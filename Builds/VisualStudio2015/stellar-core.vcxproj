@@ -484,6 +484,7 @@
     <ClCompile Include="..\..\src\work\WorkParent.cpp" />
     <ClCompile Include="..\..\src\work\WorkTests.cpp" />
     <ClCompile Include="CreateAccountTest.cpp" />
+    <ClCompile Include="CreateAliasTests.cpp" />
     <ClCompile Include="M:\fmt\fmt\format.cc" />
   </ItemGroup>
   <ItemGroup>
