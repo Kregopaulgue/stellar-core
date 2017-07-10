@@ -47,7 +47,11 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 			innerResult().code(CREATE_ALIAS_NOT_OWNER);
 			return false;
 		}
+		
+		mSourceAccount->addNumEntries(-1, ledgerManager);
+		mSourceAccount->storeChange(delta, db);
 		deleteAlias->storeDelete(delta, db);
+		
 		app.getMetrics()
 			.NewMeter({ "op-create-alias", "success", "apply" },
 				"operation")
@@ -69,7 +73,7 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 		return false;
 	}
 
-	if (alias) {   // again? - Delete! 
+	if (alias) {
 		app.getMetrics()
 			.NewMeter({ "op-create-alias", "failure", "already-exist" },
 				"operation")
@@ -87,10 +91,22 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 		return false;
 	}
 
+	if (!mSourceAccount->addNumEntries(1, ledgerManager))
+	{
+		app.getMetrics()
+			.NewMeter({ "op-create-alias", "failure", "low-reserve" },
+				"operation")
+			.Mark();
+		innerResult().code(CREATE_ALIAS_UNDERFUNDED);
+		return false;
+	}
+
 	alias = std::make_shared<AliasFrame>();
 	alias->getAlias().accountSourceID = mCreateAlias.sourceId;
 	alias->getAlias().accountID = mCreateAlias.accountId;
 	alias->storeAdd(delta, db);
+	mSourceAccount->storeChange(delta, db);
+	
 	app.getMetrics()
 		.NewMeter({ "op-create-alias", "success", "apply" },
 			"operation")

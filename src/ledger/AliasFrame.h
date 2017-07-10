@@ -59,6 +59,8 @@ namespace stellar {
 		static bool AliasFrame::exists(Database& db, LedgerKey const& key);
 		static bool AliasFrame::isExist(AccountID const& aliasID, AccountID const& sourceAccountID, Database& db);
 		static bool isAliasIdExist(AccountID const & aliasID, Database & db);
+		static void loadAliases(StatementContext & prep, std::function<void(LedgerEntry const&)> aliasProcessor);
+		static std::unordered_map<AccountID, std::vector<AliasFrame::pointer>> loadAllAliases(Database & db);
 		static AliasFrame::pointer loadAlias(LedgerDelta& delta, AccountID const& accountID, Database& db);
 
 		static AliasFrame::pointer loadAlias(AccountID const& accountID, AccountID const& accountSourceID, Database& db);
