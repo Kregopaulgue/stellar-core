@@ -1,5 +1,6 @@
 #pragma once
 #include "ledger/EntryFrame.h"
+#include "database/Database.h"
 #include <functional>
 #include <map>
 #include <unordered_map>
