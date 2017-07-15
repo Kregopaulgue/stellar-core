@@ -4,28 +4,28 @@
 #include "util/Logging.h"
 
 namespace stellar {
-	class CreateAliasOpFrame : public OperationFrame {
+	class ManageAliasOpFrame : public OperationFrame {
 	private:
-		CreateAliasResult&
+		ManageAliasResult&
 			innerResult()
 		{
-			return mResult.tr().createAliasResult();
+			return mResult.tr().manageAliasResult();
 		}
 
 		bool checkExistAccountWithIdAlias(AccountID const& accountID); //delete this
-		CreateAliasOp const& mCreateAlias;
+		ManageAliasOp const& mManageAlias;
 	public:
-		CreateAliasOpFrame(Operation const& op, OperationResult& res,
+		ManageAliasOpFrame(Operation const& op, OperationResult& res,
 			TransactionFrame& parentTx);
 
 		bool doApply(Application& app, LedgerDelta& delta,
 			LedgerManager& ledgerManager) override;
 		bool doCheckValid(Application& app) override;
 
-		static CreateAliasResultCode
+		static ManageAliasResultCode
 			getInnerCode(OperationResult const& res)
 		{
-			return res.tr().createAliasResult().code();
+			return res.tr().manageAliasResult().code();
 		}
 
 	};

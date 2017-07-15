@@ -199,8 +199,8 @@ struct OfferEntry
 */
 
 struct AliasEntry{
-	AccountID accountSourceID;
 	AccountID accountID;
+	AccountID aliasID;
 
 	union switch(int v){
 	case 0:

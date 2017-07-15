@@ -19,7 +19,7 @@
 #include "transactions/PaymentOpFrame.h"
 #include "transactions/SetOptionsOpFrame.h"
 #include "transactions/TransactionFrame.h"
-#include "transactions/CreateAliasOpFrame.h"
+#include "transactions/ManageAliasOpFrame.h"
 #include "util/Logging.h"
 #include "xdrpp/marshal.h"
 #include <string>
@@ -82,8 +82,8 @@ OperationFrame::makeHelper(Operation const& op, OperationResult& res,
         return shared_ptr<OperationFrame>(new InflationOpFrame(op, res, tx));
     case MANAGE_DATA:
         return shared_ptr<OperationFrame>(new ManageDataOpFrame(op, res, tx));
-	case CREATE_ALIAS:
-		return shared_ptr<OperationFrame>(new CreateAliasOpFrame(op, res, tx));
+	case MANAGE_ALIAS:
+		return shared_ptr<OperationFrame>(new ManageAliasOpFrame(op, res, tx));
     default:
         ostringstream err;
         err << "Unknown Tx type: " << op.body.type();

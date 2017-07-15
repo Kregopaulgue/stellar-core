@@ -39,7 +39,7 @@ TEST_CASE("alias", "[tx][alias]") {
 		auto secretKeyForB1 = SecretKey().random();
 		auto b1 = root.create(secretKeyForB1, fixAmount);
 		PublicKey &aliasID = SecretKey().random().getPublicKey();
-		b1.createAlias(aliasID, secretKeyForB1.getPublicKey());
+		b1.manageAlias(aliasID, secretKeyForB1.getPublicKey());
 		int64 b1Balance = b1.getBalance();
 		auto payAmount = 200;
 		auto txFrame = rA.tx(
@@ -57,7 +57,7 @@ TEST_CASE("alias", "[tx][alias]") {
 		auto secretKeyForB = SecretKey().random();
 		auto b1 = root.create(secretKeyForB, fixAmount);
 		SecretKey &aliasID = SecretKey().random();
-		CHECK_NOTHROW(b1.createAlias(secretKeyForA.getPublicKey(), secretKeyForB.getPublicKey()));
+		CHECK_NOTHROW(b1.manageAlias(secretKeyForA.getPublicKey(), secretKeyForB.getPublicKey()));
 	}
 
 	SECTION("Try create Account with ID reserve Alias")
@@ -65,7 +65,7 @@ TEST_CASE("alias", "[tx][alias]") {
 		SecretKey &accountKey = SecretKey().random();
 		auto accountA = root.create(accountKey, fixAmount);
 		SecretKey &aliasID = SecretKey().random();
-		accountA.createAlias(aliasID.getPublicKey(), accountKey.getPublicKey());
+		accountA.manageAlias(aliasID.getPublicKey(), accountKey.getPublicKey());
 		REQUIRE(AliasFrame::isAliasIdExist(aliasID.getPublicKey(), app.getDatabase()));
 		REQUIRE_THROWS_AS(root.create(aliasID, fixAmount), ex_CREATE_ACCOUNT_ALREADY_EXIST);
 	}
@@ -73,7 +73,7 @@ TEST_CASE("alias", "[tx][alias]") {
 	SECTION("Try create Alias for NOT exist account")
 	{
 		SecretKey &accountKey = SecretKey().random();
-		CHECK_NOTHROW(root.createAlias(accountKey.getPublicKey(), SecretKey().random().getPublicKey()));
+		CHECK_NOTHROW(root.manageAlias(accountKey.getPublicKey(), SecretKey().random().getPublicKey()));
 	}
 
 	SECTION("Try create Alias for not owner account") {
@@ -82,7 +82,7 @@ TEST_CASE("alias", "[tx][alias]") {
 		PublicKey aliasID = SecretKey().random().getPublicKey();
 		auto accountA = root.create(skA, fixAmount);
 		auto accountB = root.create(skB, fixAmount);
-		CHECK_NOTHROW(accountA.createAlias(aliasID, skB.getPublicKey()));
+		CHECK_NOTHROW(accountA.manageAlias(aliasID, skB.getPublicKey()));
 	}
 
 	SECTION("a pays b to use alias(not exist)")
@@ -105,9 +105,9 @@ TEST_CASE("alias", "[tx][alias]") {
 		SecretKey skA = SecretKey().random();
 		PublicKey aliasID = SecretKey().random().getPublicKey();
 		auto accountA = root.create(skA, fixAmount);
-		accountA.createAlias(aliasID, skA.getPublicKey());
+		accountA.manageAlias(aliasID, skA.getPublicKey());
 		REQUIRE(AliasFrame::isAliasIdExist(aliasID, app.getDatabase()));
-		accountA.createAlias(aliasID, SecretKey().random().getPublicKey());
+		accountA.manageAlias(aliasID, SecretKey().random().getPublicKey());
 		REQUIRE(!AliasFrame::isAliasIdExist(aliasID, app.getDatabase()));
 	}
 }

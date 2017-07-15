@@ -26,7 +26,7 @@ enum OperationType
     ACCOUNT_MERGE = 8,
     INFLATION = 9,
     MANAGE_DATA = 10,
-	CREATE_ALIAS = 11
+	MANAGE_ALIAS = 11
 };
 
 /* CreateAccount
@@ -42,21 +42,6 @@ struct CreateAccountOp
 {
     AccountID destination; // account to create
     int64 startingBalance; // amount they end up with
-};
-
-/* CreateAlias 
-Create Alias for account(sourceID), and if it recive money, it will sent sourceID.
-
-Threshold: med
-
-Result: CreateAliasResult
-*/
-
-struct CreateAliasOp{
-	//AccountID aliasID;
-	//bool isDelete;
-	AccountID sourceId;
-	AccountID accountId; // alias id
 };
 
 /* Payment
@@ -237,6 +222,19 @@ struct ManageDataOp
     DataValue* dataValue;   // set to null to clear
 };
 
+/* ManageAlias 
+Create Alias for account(sourceID), and if it recive money, it will sent sourceID.
+
+Threshold: med
+
+Result: ManageAliasResult
+*/
+
+struct ManageAliasOp{
+	AccountID aliasID;
+	bool isDelete;
+};
+
 /* An operation is the lowest unit of work that a transaction does */
 struct Operation
 {
@@ -269,8 +267,8 @@ struct Operation
         void;
     case MANAGE_DATA:
         ManageDataOp manageDataOp;
-	case CREATE_ALIAS:
-		CreateAliasOp createAliasOp;
+	case MANAGE_ALIAS:
+		ManageAliasOp manageAliasOp;
     }
     body;
 };
@@ -620,33 +618,6 @@ default:
     void;
 };
 
-/******* Create Alias Result ********/
-
-enum CreateAliasResultCode
-{
-    // codes considered as "success" for the operation
-    CREATE_ALIAS_SUCCESS = 0, // account was created
-
-    // codes considered as "failure" for the operation
-    CREATE_ALIAS_MALFORMED = -1,   // invalid destination
-    CREATE_ALIAS_UNDERFUNDED = -2, // not enough funds in source account
-    CREATE_ALIAS_LOW_RESERVE =
-        -3, // would create an account below the min reserve
-    CREATE_ALIAS_ALREADY_EXIST = -4, // account already exists
-	CREATE_ALIAS_ALREAY_EXIST_ACCOUNT = -5,
-	CREATE_ALIAS_NOT_OWNER = -6,
-	CREATE_ALIAS_UNDEFINED = -7
-};
-
-union CreateAliasResult switch (CreateAliasResultCode code)
-{
-case CREATE_ALIAS_SUCCESS:
-    void;
-default:
-    void;
-};
-
-
 /******* Inflation Result ********/
 
 enum InflationResultCode
@@ -694,6 +665,34 @@ default:
 
 /* High level Operation Result */
 
+
+/******* Create Alias Result ********/
+
+enum ManageAliasResultCode
+{
+    // codes considered as "success" for the operation
+    MANAGE_ALIAS_SUCCESS = 0, // account was created
+
+    // codes considered as "failure" for the operation
+    MANAGE_ALIAS_MALFORMED = -1,   // invalid destination
+    MANAGE_ALIAS_UNDERFUNDED = -2, // not enough funds in source account
+    MANAGE_ALIAS_LOW_RESERVE = -3, // would create an account below the min reserve
+    MANAGE_ALIAS_ALREADY_EXIST = -4, // account already exists
+	MANAGE_ALIAS_ALREAY_EXIST_ACCOUNT = -5,
+	MANAGE_ALIAS_NOT_OWNER = -6,
+	MANAGE_ALIAS_UNDEFINED = -7,
+	MANAGE_ALIAS_NOT_EXIST = -8
+};
+
+union ManageAliasResult switch (ManageAliasResultCode code)
+{
+case MANAGE_ALIAS_SUCCESS:
+    void;
+default:
+    void;
+};
+
+
 enum OperationResultCode
 {
     opINNER = 0, // inner object result is valid
@@ -729,8 +728,8 @@ case opINNER:
         InflationResult inflationResult;
     case MANAGE_DATA:
         ManageDataResult manageDataResult;
-	case CREATE_ALIAS:
-		CreateAliasResult createAliasResult;
+	case MANAGE_ALIAS:
+		ManageAliasResult manageAliasResult;
     }
     tr;
 default:

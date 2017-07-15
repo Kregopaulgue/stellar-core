@@ -17,7 +17,7 @@
 #include "transactions/AllowTrustOpFrame.h"
 #include "transactions/ChangeTrustOpFrame.h"
 #include "transactions/CreateAccountOpFrame.h"
-#include "transactions/CreateAliasOpFrame.h"
+#include "transactions/ManageAliasOpFrame.h"
 #include "transactions/InflationOpFrame.h"
 #include "transactions/ManageDataOpFrame.h"
 #include "transactions/ManageOfferOpFrame.h"
@@ -279,11 +279,11 @@ allowTrust(PublicKey const& trustor, Asset const& asset,
 }
 
 Operation
-createAliasOpTx(AccountID const& idAlias, AccountID const &source) {
+manageAliasOpTx(AccountID const& idAlias, AccountID const &source) {
 	Operation op;
-	op.body.type(CREATE_ALIAS);
-	op.body.createAliasOp().accountId = idAlias;
-	op.body.createAliasOp().sourceId = source;
+	op.body.type(MANAGE_ALIAS);
+	op.body.manageAliasOp().accountId = idAlias;
+	op.body.manageAliasOp().sourceId = source;
 	return op;
 }
 

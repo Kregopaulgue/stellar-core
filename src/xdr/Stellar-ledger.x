@@ -128,8 +128,8 @@ case DATA:
 case ALIAS:
 	struct
 	{
-		AccountID accountSourceID;
 		AccountID accountID;
+		AccountID aliasID;
 	} alias;
 };
 

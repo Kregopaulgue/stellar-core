@@ -100,15 +100,15 @@ TestAccount::create(std::string const& name, uint64_t initialBalance)
     return create(getAccount(name.c_str()), initialBalance);
 }
 
-void TestAccount::createAlias(AccountID aliasID, AccountID sourceAccount)
+void TestAccount::manageAlias(AccountID aliasID, AccountID sourceAccount)
 {
 	try
 	{
-		applyTx(tx({ createAliasOpTx(aliasID,sourceAccount) }),mApp);
+		applyTx(tx({ manageAliasOpTx(aliasID,sourceAccount) }),mApp);
 	}
 	catch (...)
 	{
-		LOG(INFO) << "ERROR createAlias";
+		LOG(INFO) << "ERROR manageAlias";
 	}
 }
 

@@ -36,7 +36,7 @@ TEST_CASE("exist trust", "[tx][existtrustline]") {
 	auto b1 = testAcc.create("B", amount);
 	REQUIRE(loadAccount(b1, app, true));
 	AccountID aliasID = SecretKey().random().getPublicKey();
-	testAcc.createAlias(aliasID, b1.getPublicKey());
+	testAcc.manageAlias(aliasID, b1.getPublicKey());
 	int64 a1Balance = a1.getBalance();
 	int64 b1Balance = b1.getBalance();
 	LOG(INFO) << b1Balance;
