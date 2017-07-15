@@ -53,6 +53,8 @@ Result: CreateAliasResult
 */
 
 struct CreateAliasOp{
+	//AccountID aliasID;
+	//bool isDelete;
 	AccountID sourceId;
 	AccountID accountId; // alias id
 };

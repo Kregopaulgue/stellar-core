@@ -37,7 +37,8 @@ bool stellar::CreateAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 		return false;
 	}
 
-	if (!(mSourceAccount->getID() == mCreateAlias.sourceId)) { //delete this
+	if (!(mSourceAccount->getID() == mCreateAlias.sourceId)) 
+	{ //delete this
 		auto deleteAlias = AliasFrame::loadAlias(mCreateAlias.accountId, mSourceAccount->getID(), db);
 		if (!deleteAlias) {
 			app.getMetrics()
