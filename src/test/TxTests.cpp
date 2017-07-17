@@ -279,11 +279,11 @@ allowTrust(PublicKey const& trustor, Asset const& asset,
 }
 
 Operation
-manageAliasOpTx(AccountID const& idAlias, AccountID const &source) {
+manageAliasOpTx(AccountID const& aliasID, bool isDelete) {
 	Operation op;
 	op.body.type(MANAGE_ALIAS);
-	op.body.manageAliasOp().accountId = idAlias;
-	op.body.manageAliasOp().sourceId = source;
+	op.body.manageAliasOp().aliasID = aliasID;
+	op.body.manageAliasOp().isDelete = isDelete;
 	return op;
 }
 

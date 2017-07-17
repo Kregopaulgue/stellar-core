@@ -29,28 +29,6 @@ TEST_CASE("exist trust", "[tx][existtrustline]") {
 
 	auto testAcc = TestAccount::createRoot(app);
 
-	auto a1 = testAcc.create("a1a1a1q1q", 1000000000000);
-	REQUIRE(loadAccount(a1, app, true));
-	auto paymentAmount = 1000000000;
-	auto amount = app.getLedgerManager().getMinBalance(0) + paymentAmount;
-	auto b1 = testAcc.create("B", amount);
-	REQUIRE(loadAccount(b1, app, true));
-	AccountID aliasID = SecretKey().random().getPublicKey();
-	testAcc.manageAlias(aliasID, b1.getPublicKey());
-	int64 a1Balance = a1.getBalance();
-	int64 b1Balance = b1.getBalance();
-	LOG(INFO) << b1Balance;
-	auto txFrame = a1.tx({ payment(b1,200000) });
-
-	auto res = applyCheck(txFrame, app);
-	REQUIRE(txFrame->getResultCode() == txSUCCESS);
-	LOG(INFO) << res;
-	REQUIRE(loadAccount(b1, app));
-	LOG(INFO) << b1.getBalance();
-
-	//LOG(INFO) << KeyUtils::toStrKey(a1.getSecretKey()).value.c_str();
-	//auto a2 = testAcc.create("aaaa1", 1);
-
 }
 
 

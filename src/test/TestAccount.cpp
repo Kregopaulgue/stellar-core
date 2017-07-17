@@ -100,11 +100,11 @@ TestAccount::create(std::string const& name, uint64_t initialBalance)
     return create(getAccount(name.c_str()), initialBalance);
 }
 
-void TestAccount::manageAlias(AccountID aliasID, AccountID sourceAccount)
+void TestAccount::manageAlias(AccountID aliasID, bool isDelete)
 {
 	try
 	{
-		applyTx(tx({ manageAliasOpTx(aliasID,sourceAccount) }),mApp);
+		applyTx(tx({ manageAliasOpTx(aliasID, isDelete) }),mApp);
 	}
 	catch (...)
 	{

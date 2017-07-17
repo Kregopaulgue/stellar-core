@@ -1,5 +1,6 @@
 #pragma once
 
+#include "util/asio.h"
 #include "transactions\OperationFrame.h"
 #include "util/Logging.h"
 
@@ -12,8 +13,12 @@ namespace stellar {
 			return mResult.tr().manageAliasResult();
 		}
 
-		bool checkExistAccountWithIdAlias(AccountID const& accountID); //delete this
 		ManageAliasOp const& mManageAlias;
+
+		bool CreateAlias(Application& app, Database &db, LedgerDelta& delta,
+			LedgerManager& ledgerManager);
+		bool DeleteAlias(Application& app, Database &db, LedgerDelta& delta,
+			LedgerManager& ledgerManager);
 	public:
 		ManageAliasOpFrame(Operation const& op, OperationResult& res,
 			TransactionFrame& parentTx);

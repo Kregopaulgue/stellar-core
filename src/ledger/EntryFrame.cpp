@@ -81,7 +81,7 @@ EntryFrame::storeLoad(LedgerKey const& key, Database& db)
 	{
 		auto const& alias = key.alias();
 		res = std::static_pointer_cast<EntryFrame>(
-			AliasFrame::loadAlias(alias.accountID, alias.accountSourceID, db));
+			AliasFrame::loadAlias(alias.aliasID, alias.accountID, db));
 	}
 	break;
     }
@@ -285,9 +285,9 @@ LedgerEntryKey(LedgerEntry const& e)
         k.data().accountID = d.data().accountID;
         k.data().dataName = d.data().dataName;
         break;
-	case ALIAS:   // my_change
+	case ALIAS:   
 		k.type(ALIAS);
-		k.alias().accountSourceID = d.alias().accountSourceID;
+		k.alias().aliasID = d.alias().aliasID;
 		k.alias().accountID = d.alias().accountID;
 		break;
     }

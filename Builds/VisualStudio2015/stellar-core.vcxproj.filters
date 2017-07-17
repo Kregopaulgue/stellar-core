@@ -759,10 +759,10 @@
     <ClCompile Include="..\..\..\..\AliasFrame.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\transactions\CreateAliasOpFrame.cpp">
+    <ClCompile Include="..\..\src\transactions\ManageAliasOpFrame.cpp">
       <Filter>transactions</Filter>
     </ClCompile>
-    <ClCompile Include="CreateAliasTests.cpp">
+    <ClCompile Include="ManageAliasTests.cpp">
       <Filter>transactions\tests</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1332,7 +1332,7 @@
       <Filter>transactions\tests</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ledger\AliasFrame.h" />
-    <ClInclude Include="..\..\src\transactions\CreateAliasOpFrame.h">
+    <ClInclude Include="..\..\src\transactions\ManageAliasOpFrame.h">
       <Filter>transactions</Filter>
     </ClInclude>
   </ItemGroup>

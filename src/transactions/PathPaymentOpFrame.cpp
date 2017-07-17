@@ -69,12 +69,12 @@ namespace stellar
 			destination =
 				AccountFrame::loadAccount(delta, mPathPayment.destination, db);
 			if (!destination) {
+
 				AliasFrame::pointer destinationAlias = AliasFrame::loadAlias(delta, mPathPayment.destination, db);
 				if (destinationAlias) {
 					PathPaymentOp* op = const_cast<PathPaymentOp*>(&mPathPayment);
-					op->destination = destinationAlias->getAlias().accountSourceID;
-					destination =
-						AccountFrame::loadAccount(delta, mPathPayment.destination, db);
+					op->destination = destinationAlias->getAlias().accountID;
+					destination = AccountFrame::loadAccount(delta, mPathPayment.destination, db);
 				}
 
 				if (!destination)
