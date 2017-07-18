@@ -5,7 +5,7 @@
 #include "medida/meter.h"
 #include "medida/metrics_registry.h"
 
-bool stellar::ManageAliasOpFrame::CreateAlias(Application& app, Database & db, LedgerDelta & delta, LedgerManager & ledgerManager)
+bool stellar::ManageAliasOpFrame::createAlias(Application& app, Database & db, LedgerDelta & delta, LedgerManager & ledgerManager)
 {
 	AccountID sourceAccountID = mSourceAccount->getAccount().accountID;
 	auto alias = AliasFrame::loadAlias(mManageAlias.aliasID, sourceAccountID, db);
@@ -54,7 +54,7 @@ bool stellar::ManageAliasOpFrame::CreateAlias(Application& app, Database & db, L
 	return true;
 }
 
-bool stellar::ManageAliasOpFrame::DeleteAlias(Application& app, Database & db, LedgerDelta & delta, LedgerManager & ledgerManager)
+bool stellar::ManageAliasOpFrame::deleteAlias(Application& app, Database & db, LedgerDelta & delta, LedgerManager & ledgerManager)
 {
 	AccountID sourceAccountID = mSourceAccount->getAccount().accountID;
 	auto deleteAlias = AliasFrame::loadAlias(mManageAlias.aliasID, sourceAccountID, db);
@@ -68,10 +68,7 @@ bool stellar::ManageAliasOpFrame::DeleteAlias(Application& app, Database & db, L
 		return false;
 	}
 
-	if (deleteAlias->getAlias().accountID == sourceAccountID) {
-
-	}
-	else {
+	if (!(deleteAlias->getAlias().accountID == sourceAccountID)) {
 		app.getMetrics()
 			.NewMeter({ "op-manage-alias", "failed", "not-alias-owner" },
 				"operation")
@@ -108,17 +105,17 @@ bool stellar::ManageAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 
 	if (mManageAlias.isDelete)
 	{
-		return DeleteAlias(app, db, delta, ledgerManager);
+		return deleteAlias(app, db, delta, ledgerManager);
 	}
 	else
 	{
-		return CreateAlias(app, db, delta, ledgerManager);
+		return createAlias(app, db, delta, ledgerManager);
 	}
 }
 
 bool stellar::ManageAliasOpFrame::doCheckValid(Application & app)
 {
-	/*AccountID sourceAccountID ;
+	AccountID sourceAccountID = getSourceID();
 
 	if (mManageAlias.aliasID == sourceAccountID) {
 		app.getMetrics()
@@ -127,6 +124,6 @@ bool stellar::ManageAliasOpFrame::doCheckValid(Application & app)
 			.Mark();
 		innerResult().code(MANAGE_ALIAS_ALREAY_EXIST_ACCOUNT);
 		return false;
-	}*/
+	}
 	return true;
 }

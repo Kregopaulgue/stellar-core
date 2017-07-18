@@ -15,9 +15,9 @@ namespace stellar {
 
 		ManageAliasOp const& mManageAlias;
 
-		bool CreateAlias(Application& app, Database &db, LedgerDelta& delta,
+		bool createAlias(Application& app, Database &db, LedgerDelta& delta,
 			LedgerManager& ledgerManager);
-		bool DeleteAlias(Application& app, Database &db, LedgerDelta& delta,
+		bool deleteAlias(Application& app, Database &db, LedgerDelta& delta,
 			LedgerManager& ledgerManager);
 	public:
 		ManageAliasOpFrame(Operation const& op, OperationResult& res,

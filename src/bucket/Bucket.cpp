@@ -22,6 +22,7 @@
 #include "ledger/LedgerDelta.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
+#include "ledger/AliasFrame.h"
 #include "lib/util/format.h"
 #include "main/Application.h"
 #include "medida/medida.h"
