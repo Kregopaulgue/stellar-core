@@ -8,30 +8,35 @@
 
 namespace stellar
 {
-namespace LedgerTestUtils
-{
+	namespace LedgerTestUtils
+	{
 
-// note: entries generated are valid in the sense that they are sane by
-// themselves
-// it does NOT mean that it makes sense relative to other entries:
-// for example the numsubentries of a related account is not updated when
-// generating a 'valid' trust line
+		// note: entries generated are valid in the sense that they are sane by
+		// themselves
+		// it does NOT mean that it makes sense relative to other entries:
+		// for example the numsubentries of a related account is not updated when
+		// generating a 'valid' trust line
 
-void makeValid(AccountEntry& a);
-void makeValid(TrustLineEntry& tl);
-void makeValid(OfferEntry& o);
-void makeValid(DataEntry& d);
+		void makeValid(AccountEntry& a);
+		void makeValid(TrustLineEntry& tl);
+		void makeValid(OfferEntry& o);
+		void makeValid(DataEntry& d);
+		void makeValid(AliasEntry& al);
 
-LedgerEntry generateValidLedgerEntry(size_t b = 3);
-std::vector<LedgerEntry> generateValidLedgerEntries(size_t n);
+		LedgerEntry generateValidLedgerEntry(size_t b = 3);
+		std::vector<LedgerEntry> generateValidLedgerEntries(size_t n);
 
-AccountEntry generateValidAccountEntry(size_t b = 3);
-std::vector<AccountEntry> generateValidAccountEntries(size_t n);
+		AccountEntry generateValidAccountEntry(size_t b = 3);
+		std::vector<AccountEntry> generateValidAccountEntries(size_t n);
 
-TrustLineEntry generateValidTrustLineEntry(size_t b = 3);
-std::vector<TrustLineEntry> generateValidTrustLineEntries(size_t n);
+		TrustLineEntry generateValidTrustLineEntry(size_t b = 3);
+		std::vector<TrustLineEntry> generateValidTrustLineEntries(size_t n);
 
-OfferEntry generateValidOfferEntry(size_t b = 3);
-std::vector<OfferEntry> generateValidOfferEntries(size_t n);
-}
+		OfferEntry generateValidOfferEntry(size_t b = 3);
+		std::vector<OfferEntry> generateValidOfferEntries(size_t n);
+
+		AliasEntry generateValidAliasEntry(size_t b = 3);
+		std::vector<AliasEntry> generateValidAliasEntries(size_t n);
+
+	}
 }

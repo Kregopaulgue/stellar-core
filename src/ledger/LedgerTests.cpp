@@ -64,11 +64,11 @@ TEST_CASE("single ledger entry insert SQL", "[singlesql][entrysql]")
 TEST_CASE("DB cache interaction with transactions", "[ledger][dbcache]")
 {
     Config::TestDbMode mode = Config::TESTDB_ON_DISK_SQLITE;
-#ifdef USE_POSTGRES
-    if (!force_sqlite)
-        mode = Config::TESTDB_POSTGRESQL;
-#endif
-
+//#ifdef USE_POSTGRES
+//    if (!force_sqlite)
+//        mode = Config::TESTDB_POSTGRESQL;
+//#endif
+//
     VirtualClock clock;
     Application::pointer app =
         Application::create(clock, getTestConfig(0, mode));

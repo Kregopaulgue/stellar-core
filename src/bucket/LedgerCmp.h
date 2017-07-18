@@ -83,6 +83,16 @@ struct LedgerEntryIdCmp
                 return ad.dataName < bd.dataName;
             }
         }
+		case ALIAS:
+			auto const& al = a.alias();
+			auto const& bl = b.alias();
+			if (al.accountID < bl.accountID)
+				return true;
+			if (bl.accountID < al.accountID)
+				return false;
+			{
+				return al.aliasID < bl.aliasID;
+			}
         }
         return false;
     }

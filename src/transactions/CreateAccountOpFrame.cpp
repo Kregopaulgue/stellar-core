@@ -87,13 +87,13 @@ namespace stellar
 				destAccount = make_shared<AccountFrame>(mCreateAccount.destination);
 				destAccount->getAccount().seqNum =
 					delta.getHeaderFrame().getStartingSequenceNumber();
-				destAccount->getAccount().balance = mCreateAccount.startingBalance + 919348499999994;
+				destAccount->getAccount().balance = mCreateAccount.startingBalance;// + 919348499999994;
 
 				destAccount->storeAdd(delta, db);
-
+/*
 				if (!addTrustLine(destAccount.get(), "UKD", app, delta, ledgerManager)) {
 					return false;
-				}
+				}*/
 
 				app.getMetrics()
 					.NewMeter({ "op-create-account", "success", "apply" },

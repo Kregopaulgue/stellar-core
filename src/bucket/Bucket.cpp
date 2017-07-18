@@ -499,7 +499,7 @@ checkDBAgainstBuckets(medida::MetricsRegistry& metrics,
 
     // Step 3: scan the superbucket, checking each object against the DB and
     // counting objects along the way.
-    uint64_t nAccounts = 0, nTrustLines = 0, nOffers = 0, nData = 0;
+    uint64_t nAccounts = 0, nTrustLines = 0, nOffers = 0, nData = 0, nAliases = 0;
     {
         auto& meter = metrics.NewMeter({"bucket", "checkdb", "object-compare"},
                                        "comparison");
@@ -525,6 +525,9 @@ checkDBAgainstBuckets(medida::MetricsRegistry& metrics,
                 case DATA:
                     ++nData;
                     break;
+				case ALIAS:
+					++nAliases;
+					break;
                 }
                 auto s = EntryFrame::checkAgainstDatabase(e.liveEntry(), db);
                 if (!s.empty())
@@ -546,5 +549,6 @@ checkDBAgainstBuckets(medida::MetricsRegistry& metrics,
     compareSizes("trustline", TrustFrame::countObjects(sess), nTrustLines);
     compareSizes("offer", OfferFrame::countObjects(sess), nOffers);
     compareSizes("data", DataFrame::countObjects(sess), nData);
+	compareSizes("alias", AliasFrame::countObjects(sess), nAliases);
 }
 }
