@@ -59,6 +59,15 @@ bool stellar::ManageAliasOpFrame::DeleteAlias(Application& app, Database & db, L
 	AccountID sourceAccountID = mSourceAccount->getAccount().accountID;
 	auto deleteAlias = AliasFrame::loadAlias(mManageAlias.aliasID, sourceAccountID, db);
 
+	if (!deleteAlias) {
+		app.getMetrics()
+			.NewMeter({ "op-manage-alias", "failed", "not-alias-exist" },
+				"operation")
+			.Mark();
+		innerResult().code(MANAGE_ALIAS_NOT_EXIST);
+		return false;
+	}
+
 	if (deleteAlias->getAlias().accountID == sourceAccountID) {
 
 	}
@@ -68,15 +77,6 @@ bool stellar::ManageAliasOpFrame::DeleteAlias(Application& app, Database & db, L
 				"operation")
 			.Mark();
 		innerResult().code(MANAGE_ALIAS_NOT_OWNER);
-		return false;
-	}
-
-	if (!deleteAlias) {
-		app.getMetrics()
-			.NewMeter({ "op-manage-alias", "failed", "not-alias-exist" },
-				"operation")
-			.Mark();
-		innerResult().code(MANAGE_ALIAS_NOT_EXIST);
 		return false;
 	}
 
