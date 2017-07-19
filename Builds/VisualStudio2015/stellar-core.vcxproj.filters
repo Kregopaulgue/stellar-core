@@ -756,14 +756,14 @@
     <ClCompile Include="CreateAccountTest.cpp">
       <Filter>transactions\tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\AliasFrame.cpp">
-      <Filter>ledger</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\transactions\ManageAliasOpFrame.cpp">
       <Filter>transactions</Filter>
     </ClCompile>
     <ClCompile Include="ManageAliasTests.cpp">
       <Filter>transactions\tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ledger\AliasFrame.cpp">
+      <Filter>ledger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
