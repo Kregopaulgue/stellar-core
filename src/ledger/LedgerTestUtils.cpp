@@ -89,7 +89,7 @@ namespace stellar
 		void makeValid(AliasEntry& al)
 		{
 			while (al.accountID == al.aliasID) {
-				al.aliasID = SecretKey().random().getPublicKey();
+				al.aliasID = PubKeyUtils::random();
 			}
 		}
 

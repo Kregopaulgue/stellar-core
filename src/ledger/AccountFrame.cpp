@@ -157,8 +157,6 @@ AccountFrame::addNumEntries(int count, LedgerManager const& lm)
     {
         throw std::runtime_error("invalid account state");
     }
-	int64_t test1 = getBalance();
-	int64_t test2 = lm.getMinBalance(newEntriesCount);
     // only check minBalance when attempting to add subEntries
     if (count > 0 && getBalance() < lm.getMinBalance(newEntriesCount))
     {

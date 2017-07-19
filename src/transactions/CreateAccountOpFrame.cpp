@@ -39,8 +39,6 @@ namespace stellar
 
 		Database& db = ledgerManager.getDatabase();
 
-		destAccount =
-			AccountFrame::loadAccount(delta, mCreateAccount.destination, db);
 
 		bool isReverseId = AliasFrame::isAliasIdExist(mCreateAccount.destination, db);
 
@@ -52,6 +50,9 @@ namespace stellar
 			innerResult().code(CREATE_ACCOUNT_ALREADY_EXIST);
 			return false;
 		}
+
+		destAccount =
+			AccountFrame::loadAccount(delta, mCreateAccount.destination, db);
 
 		if (!destAccount)
 		{
@@ -87,13 +88,9 @@ namespace stellar
 				destAccount = make_shared<AccountFrame>(mCreateAccount.destination);
 				destAccount->getAccount().seqNum =
 					delta.getHeaderFrame().getStartingSequenceNumber();
-				destAccount->getAccount().balance = mCreateAccount.startingBalance;// + 919348499999994;
+				destAccount->getAccount().balance = mCreateAccount.startingBalance;
 
 				destAccount->storeAdd(delta, db);
-/*
-				if (!addTrustLine(destAccount.get(), "UKD", app, delta, ledgerManager)) {
-					return false;
-				}*/
 
 				app.getMetrics()
 					.NewMeter({ "op-create-account", "success", "apply" },
@@ -145,11 +142,10 @@ namespace stellar
 	}
 
 	bool CreateAccountOpFrame::addTrustLine(AccountFrame * account, const char* name, Application& app, LedgerDelta& delta,
-											LedgerManager& ledgerManager)
+		LedgerManager& ledgerManager)
 	{
-
+		//if (!addTrustLine(destAccount.get(), "UKD", app, delta, ledgerManager)) 
 		Database& db = ledgerManager.getDatabase();
-
 		Asset aset;
 		aset.type(ASSET_TYPE_CREDIT_ALPHANUM4);
 		strToAssetCode(aset.alphaNum4().assetCode, name);

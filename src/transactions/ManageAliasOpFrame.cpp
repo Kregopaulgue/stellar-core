@@ -18,9 +18,9 @@ bool stellar::ManageAliasOpFrame::createAlias(Application& app, Database & db, L
 		return false;
 	}
 
-	auto AccountWithAliasID = AccountFrame::loadAccount(mManageAlias.aliasID, db);
+	auto accountWithAliasID = AccountFrame::loadAccount(mManageAlias.aliasID, db);
 
-	if (AccountWithAliasID) {
+	if (accountWithAliasID) {
 		app.getMetrics()
 			.NewMeter({ "op-manage-alias", "failed", "account-already-exist" },
 				"operation")
@@ -77,7 +77,16 @@ bool stellar::ManageAliasOpFrame::deleteAlias(Application& app, Database & db, L
 		return false;
 	}
 
-	mSourceAccount->addNumEntries(-1, ledgerManager);
+	if (!mSourceAccount->addNumEntries(-1, ledgerManager))
+	{
+		app.getMetrics()
+			.NewMeter({ "op-create-alias", "failure", "low-reserve" },
+				"operation")
+			.Mark();
+		innerResult().code(MANAGE_ALIAS_UNDERFUNDED);
+		return false;
+	}
+
 	mSourceAccount->storeChange(delta, db);
 	deleteAlias->storeDelete(delta, db);
 
@@ -107,10 +116,8 @@ bool stellar::ManageAliasOpFrame::doApply(Application & app, LedgerDelta & delta
 	{
 		return deleteAlias(app, db, delta, ledgerManager);
 	}
-	else
-	{
-		return createAlias(app, db, delta, ledgerManager);
-	}
+	
+	return createAlias(app, db, delta, ledgerManager);
 }
 
 bool stellar::ManageAliasOpFrame::doCheckValid(Application & app)

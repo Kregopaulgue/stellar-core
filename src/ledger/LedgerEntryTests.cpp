@@ -6,6 +6,7 @@
 #include "LedgerDelta.h"
 #include "OfferFrame.h"
 #include "TrustFrame.h"
+#include "AliasFrame.h"
 #include "crypto/SecretKey.h"
 #include "database/Database.h"
 #include "ledger/LedgerManager.h"
@@ -26,251 +27,316 @@ using namespace stellar;
 namespace LedgerEntryTests
 {
 
-TEST_CASE("Ledger Entry tests", "[ledgerentry]")
-{
-    Config cfg(getTestConfig(0));
+	TEST_CASE("Ledger Entry tests", "[ledgerentry]")
+	{
+		Config cfg(getTestConfig(0));
 
-    VirtualClock clock;
-    Application::pointer app = Application::create(clock, cfg);
-    app->start();
-    Database& db = app->getDatabase();
+		VirtualClock clock;
+		Application::pointer app = Application::create(clock, cfg);
+		app->start();
+		Database& db = app->getDatabase();
 
-    SECTION("round trip with database")
-    {
-        std::vector<LedgerEntry> accounts(100);
+		SECTION("round trip with database")
+		{
+			std::vector<LedgerEntry> accounts(100);
 
-        std::unordered_map<AccountID, LedgerEntry> accountsMap;
+			std::unordered_map<AccountID, LedgerEntry> accountsMap;
 
-        for (auto& l : accounts)
-        {
-            l.data.type(ACCOUNT);
-            auto& a = l.data.account();
-            a = LedgerTestUtils::generateValidAccountEntry(5);
-            accountsMap.insert(std::make_pair(a.accountID, l));
-        }
+			for (auto& l : accounts)
+			{
+				l.data.type(ACCOUNT);
+				auto& a = l.data.account();
+				a = LedgerTestUtils::generateValidAccountEntry(5);
+				accountsMap.insert(std::make_pair(a.accountID, l));
+			}
 
-        LedgerHeader lh;
-        LedgerDelta delta(lh, db, false);
+			LedgerHeader lh;
+			LedgerDelta delta(lh, db, false);
 
-        // adding accounts
-        for (auto const& l : accountsMap)
-        {
-            AccountFrame::pointer af = std::make_shared<AccountFrame>(l.second);
-            af->storeAdd(delta, db);
-            auto fromDb = AccountFrame::loadAccount(af->getID(), db);
-            REQUIRE(af->getAccount() == fromDb->getAccount());
-        }
-        app->getLedgerManager().checkDbState();
+			// adding accounts
+			for (auto const& l : accountsMap)
+			{
+				AccountFrame::pointer af = std::make_shared<AccountFrame>(l.second);
+				af->storeAdd(delta, db);
+				auto fromDb = AccountFrame::loadAccount(af->getID(), db);
+				REQUIRE(af->getAccount() == fromDb->getAccount());
+			}
+			app->getLedgerManager().checkDbState();
 
-        // updating accounts
-        for (auto& l : accountsMap)
-        {
-            AccountEntry& newA = l.second.data.account();
-            // replace by completely new object
-            newA = LedgerTestUtils::generateValidAccountEntry(5);
+			// updating accounts
+			for (auto& l : accountsMap)
+			{
+				AccountEntry& newA = l.second.data.account();
+				// replace by completely new object
+				newA = LedgerTestUtils::generateValidAccountEntry(5);
 
-            // preserve the accountID as it's the key
-            newA.accountID = l.first;
+				// preserve the accountID as it's the key
+				newA.accountID = l.first;
 
-            AccountFrame::pointer af = std::make_shared<AccountFrame>(l.second);
-            af->storeChange(delta, db);
-            auto fromDb = AccountFrame::loadAccount(af->getID(), db);
-            REQUIRE(af->getAccount() == fromDb->getAccount());
-        }
-        app->getLedgerManager().checkDbState();
+				AccountFrame::pointer af = std::make_shared<AccountFrame>(l.second);
+				af->storeChange(delta, db);
+				auto fromDb = AccountFrame::loadAccount(af->getID(), db);
+				REQUIRE(af->getAccount() == fromDb->getAccount());
+			}
+			app->getLedgerManager().checkDbState();
 
-        // create a bunch of trust lines
-        std::unordered_map<AccountID, std::vector<TrustFrame::pointer>>
-            trustLinesMap;
+			// create a bunch of trust lines
+			std::unordered_map<AccountID, std::vector<TrustFrame::pointer>>
+				trustLinesMap;
 
-        autocheck::generator<uint8_t> intGen;
+			autocheck::generator<uint8_t> intGen;
+			autocheck::generator<AccountID> accountIDgen;
 
-        auto entriesProcessor =
-            [&](std::function<void(LedgerEntry&)> accountProc) {
-                for (auto& l : accountsMap)
-                {
-                    accountProc(l.second);
+			auto entriesProcessor =
+				[&](std::function<void(LedgerEntry&)> accountProc) {
+				for (auto& l : accountsMap)
+				{
+					accountProc(l.second);
 
-                    AccountFrame::pointer af =
-                        std::make_shared<AccountFrame>(l.second);
-                    af->storeChange(delta, db);
-                    auto fromDb = AccountFrame::loadAccount(af->getID(), db);
-                    REQUIRE(af->getAccount() == fromDb->getAccount());
-                }
-            };
+					AccountFrame::pointer af =
+						std::make_shared<AccountFrame>(l.second);
+					af->storeChange(delta, db);
+					auto fromDb = AccountFrame::loadAccount(af->getID(), db);
+					REQUIRE(af->getAccount() == fromDb->getAccount());
+				}
+			};
 
-        auto trustLineProcessor = [&](std::function<int(LedgerEntry&)> proc) {
-            entriesProcessor([&](LedgerEntry& account) {
-                AccountEntry& newA = account.data.account();
-                uint8_t nbLines = intGen() % 64;
-                for (uint8_t i = 0; i < nbLines; i++)
-                {
-                    LedgerEntry le;
-                    le.data.type(TRUSTLINE);
-                    auto& tl = le.data.trustLine();
-                    tl = LedgerTestUtils::generateValidTrustLineEntry(5);
-                    tl.accountID = newA.accountID;
-                    newA.numSubEntries += proc(le);
-                }
-            });
-        };
+			auto trustLineProcessor = [&](std::function<int(LedgerEntry&)> proc) {
+				entriesProcessor([&](LedgerEntry& account) {
+					AccountEntry& newA = account.data.account();
+					uint8_t nbLines = intGen() % 64;
+					for (uint8_t i = 0; i < nbLines; i++)
+					{
+						LedgerEntry le;
+						le.data.type(TRUSTLINE);
+						auto& tl = le.data.trustLine();
+						tl = LedgerTestUtils::generateValidTrustLineEntry(5);
+						tl.accountID = newA.accountID;
+						newA.numSubEntries += proc(le);
+					}
+				});
+			};
 
-        // create a bunch of trust lines
-        trustLineProcessor([&](LedgerEntry& le) {
-            auto& lines = trustLinesMap[le.data.trustLine().accountID];
+			// create a bunch of trust lines
+			trustLineProcessor([&](LedgerEntry& le) {
+				auto& lines = trustLinesMap[le.data.trustLine().accountID];
 
-            LedgerKey thisKey = LedgerEntryKey(le);
+				LedgerKey thisKey = LedgerEntryKey(le);
 
-            if (std::find_if(lines.begin(), lines.end(),
-                             [&thisKey](TrustFrame::pointer tf) {
-                                 return thisKey == tf->getKey();
-                             }) == lines.end())
-            {
-                auto tfp = std::make_shared<TrustFrame>(le);
-                tfp->storeAdd(delta, db);
-                lines.emplace_back(tfp);
-                return 1;
-            }
-            return 0;
-        });
+				if (std::find_if(lines.begin(), lines.end(),
+					[&thisKey](TrustFrame::pointer tf) {
+					return thisKey == tf->getKey();
+				}) == lines.end())
+				{
+					auto tfp = std::make_shared<TrustFrame>(le);
+					tfp->storeAdd(delta, db);
+					lines.emplace_back(tfp);
+					return 1;
+				}
+				return 0;
+			});
 
-        app->getLedgerManager().checkDbState();
+			app->getLedgerManager().checkDbState();
 
-        // modify trust lines
-        trustLineProcessor([&](LedgerEntry& le) {
-            auto& lines = trustLinesMap[le.data.trustLine().accountID];
-            if (lines.size() != 0)
-            {
-                size_t indexToChange = intGen() % lines.size();
-                auto tfp = lines[indexToChange];
-                // change all but the asset
-                le.data.trustLine().asset = tfp->getTrustLine().asset;
-                tfp->mEntry = le;
-                tfp->storeChange(delta, db);
-                auto& thisTL = tfp->getTrustLine();
-                auto fromDb = TrustFrame::loadTrustLine(thisTL.accountID,
-                                                        thisTL.asset, db);
-                REQUIRE(thisTL == fromDb->getTrustLine());
-            }
-            return 0;
-        });
+			// modify trust lines
+			trustLineProcessor([&](LedgerEntry& le) {
+				auto& lines = trustLinesMap[le.data.trustLine().accountID];
+				if (lines.size() != 0)
+				{
+					size_t indexToChange = intGen() % lines.size();
+					auto tfp = lines[indexToChange];
+					// change all but the asset
+					le.data.trustLine().asset = tfp->getTrustLine().asset;
+					tfp->mEntry = le;
+					tfp->storeChange(delta, db);
+					auto& thisTL = tfp->getTrustLine();
+					auto fromDb = TrustFrame::loadTrustLine(thisTL.accountID,
+						thisTL.asset, db);
+					REQUIRE(thisTL == fromDb->getTrustLine());
+				}
+				return 0;
+			});
 
-        app->getLedgerManager().checkDbState();
+			app->getLedgerManager().checkDbState();
 
-        std::unordered_map<AccountID, std::vector<OfferFrame::pointer>>
-            offerMap;
-        std::unordered_set<uint64> offerIDs;
+			std::unordered_map<AccountID, std::vector<OfferFrame::pointer>>
+				offerMap;
+			std::unordered_set<uint64> offerIDs;
 
-        auto offerProcessor = [&](std::function<int(LedgerEntry&)> proc) {
-            entriesProcessor([&](LedgerEntry& account) {
-                AccountEntry& newA = account.data.account();
-                uint8_t nbOffers = intGen() % 64;
-                for (uint8_t i = 0; i < nbOffers; i++)
-                {
-                    LedgerEntry le;
-                    le.data.type(OFFER);
-                    auto& of = le.data.offer();
-                    of = LedgerTestUtils::generateValidOfferEntry(5000);
-                    of.sellerID = newA.accountID;
-                    newA.numSubEntries += proc(le);
-                }
-            });
-        };
+			auto offerProcessor = [&](std::function<int(LedgerEntry&)> proc) {
+				entriesProcessor([&](LedgerEntry& account) {
+					AccountEntry& newA = account.data.account();
+					uint8_t nbOffers = intGen() % 64;
+					for (uint8_t i = 0; i < nbOffers; i++)
+					{
+						LedgerEntry le;
+						le.data.type(OFFER);
+						auto& of = le.data.offer();
+						of = LedgerTestUtils::generateValidOfferEntry(5000);
+						of.sellerID = newA.accountID;
+						newA.numSubEntries += proc(le);
+					}
+				});
+			};
 
-        // create a bunch of offers
-        offerProcessor([&](LedgerEntry& le) {
-            auto& offers = offerMap[le.data.offer().sellerID];
+			// create a bunch of offers
+			offerProcessor([&](LedgerEntry& le) {
+				auto& offers = offerMap[le.data.offer().sellerID];
 
-            LedgerKey thisKey = LedgerEntryKey(le);
+				LedgerKey thisKey = LedgerEntryKey(le);
 
-            if (std::find(offerIDs.begin(), offerIDs.end(),
-                          le.data.offer().offerID) == offerIDs.end())
-            {
-                auto off = std::make_shared<OfferFrame>(le);
-                off->storeAdd(delta, db);
-                offers.emplace_back(off);
-                offerIDs.insert(off->getOfferID());
-                return 1;
-            }
-            return 0;
-        });
+				if (std::find(offerIDs.begin(), offerIDs.end(),
+					le.data.offer().offerID) == offerIDs.end())
+				{
+					auto off = std::make_shared<OfferFrame>(le);
+					off->storeAdd(delta, db);
+					offers.emplace_back(off);
+					offerIDs.insert(off->getOfferID());
+					return 1;
+				}
+				return 0;
+			});
 
-        app->getLedgerManager().checkDbState();
+			app->getLedgerManager().checkDbState();
 
-        // modify offers
-        offerProcessor([&](LedgerEntry& le) {
-            auto& offers = offerMap[le.data.offer().sellerID];
-            if (offers.size() != 0)
-            {
-                size_t indexToChange = intGen() % offers.size();
-                auto off = offers[indexToChange];
-                // change all but sellerID and OfferID
+			// modify offers
+			offerProcessor([&](LedgerEntry& le) {
+				auto& offers = offerMap[le.data.offer().sellerID];
+				if (offers.size() != 0)
+				{
+					size_t indexToChange = intGen() % offers.size();
+					auto off = offers[indexToChange];
+					// change all but sellerID and OfferID
 
-                auto& newO = le.data.offer();
+					auto& newO = le.data.offer();
 
-                auto& thisO = off->getOffer();
+					auto& thisO = off->getOffer();
 
-                newO.offerID = thisO.offerID;
-                newO.sellerID = thisO.sellerID;
+					newO.offerID = thisO.offerID;
+					newO.sellerID = thisO.sellerID;
 
-                thisO = newO;
+					thisO = newO;
 
-                off->storeChange(delta, db);
-                auto fromDb =
-                    OfferFrame::loadOffer(thisO.sellerID, thisO.offerID, db);
-                REQUIRE(thisO == fromDb->getOffer());
-            }
-            return 0;
-        });
+					off->storeChange(delta, db);
+					auto fromDb =
+						OfferFrame::loadOffer(thisO.sellerID, thisO.offerID, db);
+					REQUIRE(thisO == fromDb->getOffer());
+				}
+				return 0;
+			});
 
-        app->getLedgerManager().checkDbState();
+			app->getLedgerManager().checkDbState();
 
-        // delete offers
-        for (auto& ofl : offerMap)
-        {
-            LedgerEntry& ale = accountsMap[ofl.first];
-            for (auto off : ofl.second)
-            {
-                off->storeDelete(delta, db);
-                ale.data.account().numSubEntries--;
-            }
-            AccountFrame::pointer af = std::make_shared<AccountFrame>(ale);
-            af->storeChange(delta, db);
-            auto fromDb = AccountFrame::loadAccount(af->getID(), db);
-            REQUIRE(af->getAccount() == fromDb->getAccount());
-        }
 
-        app->getLedgerManager().checkDbState();
+			// create alias
 
-        // delete trust lines
-        for (auto& atl : trustLinesMap)
-        {
-            LedgerEntry& ale = accountsMap[atl.first];
-            for (auto tf : atl.second)
-            {
-                tf->storeDelete(delta, db);
-                ale.data.account().numSubEntries--;
-            }
-            AccountFrame::pointer af = std::make_shared<AccountFrame>(ale);
-            af->storeChange(delta, db);
-            auto fromDb = AccountFrame::loadAccount(af->getID(), db);
-            REQUIRE(af->getAccount() == fromDb->getAccount());
-        }
+			std::unordered_map<AccountID, std::vector<AliasFrame::pointer>>
+				aliasMap;
+			std::unordered_set<uint64> aliasIDs;
 
-        app->getLedgerManager().checkDbState();
+			auto aliasProcessor = [&](std::function<int(LedgerEntry&)> proc) {
+				entriesProcessor([&](LedgerEntry& account) {
+					AccountEntry& newA = account.data.account();
+					uint8_t nbAliases = intGen() % 64;
+					for (uint8_t i = 0; i < nbAliases; i++)
+					{
+						LedgerEntry le;
+						le.data.type(ALIAS);
+						auto& al = le.data.alias();
+						al = LedgerTestUtils::generateValidAliasEntry(5);
+						al.accountID = newA.accountID;
+						newA.numSubEntries += proc(le);
+					}
+				});
+			};
 
-        // deleting accounts
-        for (auto const& l : accountsMap)
-        {
-            AccountFrame::pointer af = std::make_shared<AccountFrame>(l.second);
-            REQUIRE(AccountFrame::loadAccount(af->getID(), db) != nullptr);
-            REQUIRE(AccountFrame::exists(db, af->getKey()));
-            af->storeDelete(delta, db);
-            REQUIRE(AccountFrame::loadAccount(af->getID(), db) == nullptr);
-            REQUIRE(!AccountFrame::exists(db, af->getKey()));
-        }
+			aliasProcessor([&](LedgerEntry& le) {
+				auto& lines = aliasMap[le.data.alias().accountID];
 
-        app->getLedgerManager().checkDbState();
-    }
-}
+				LedgerKey thisKey = LedgerEntryKey(le);
+
+				if (std::find_if(lines.begin(), lines.end(),
+					[&thisKey](AliasFrame::pointer alf) {
+					return thisKey == alf->getKey();
+				}) == lines.end())
+				{
+					auto alfp = std::make_shared<AliasFrame>(le);
+					alfp->storeAdd(delta, db);
+					lines.emplace_back(alfp);
+					return 1;
+				}
+				return 0;
+			});
+
+			app->getLedgerManager().checkDbState();
+
+
+			// alias
+
+			// delete aliases
+			for (auto& al : aliasMap)
+			{
+				LedgerEntry& ale = accountsMap[al.first];
+				for (auto alf : al.second)
+				{
+					alf->storeDelete(delta, db);
+					ale.data.account().numSubEntries--;
+				}
+				AccountFrame::pointer af = std::make_shared<AccountFrame>(ale);
+				af->storeChange(delta, db);
+				auto fromDb = AccountFrame::loadAccount(af->getID(), db);
+				REQUIRE(af->getAccount() == fromDb->getAccount());
+			}
+
+			app->getLedgerManager().checkDbState();
+			// alias
+
+			// delete offers
+			for (auto& ofl : offerMap)
+			{
+				LedgerEntry& ale = accountsMap[ofl.first];
+				for (auto off : ofl.second)
+				{
+					off->storeDelete(delta, db);
+					ale.data.account().numSubEntries--;
+				}
+				AccountFrame::pointer af = std::make_shared<AccountFrame>(ale);
+				af->storeChange(delta, db);
+				auto fromDb = AccountFrame::loadAccount(af->getID(), db);
+				REQUIRE(af->getAccount() == fromDb->getAccount());
+			}
+
+			app->getLedgerManager().checkDbState();
+
+			// delete trust lines
+			for (auto& atl : trustLinesMap)
+			{
+				LedgerEntry& ale = accountsMap[atl.first];
+				for (auto tf : atl.second)
+				{
+					tf->storeDelete(delta, db);
+					ale.data.account().numSubEntries--;
+				}
+				AccountFrame::pointer af = std::make_shared<AccountFrame>(ale);
+				af->storeChange(delta, db);
+				auto fromDb = AccountFrame::loadAccount(af->getID(), db);
+				REQUIRE(af->getAccount() == fromDb->getAccount());
+			}
+
+			app->getLedgerManager().checkDbState();
+
+			// deleting accounts
+			for (auto const& l : accountsMap)
+			{
+				AccountFrame::pointer af = std::make_shared<AccountFrame>(l.second);
+				REQUIRE(AccountFrame::loadAccount(af->getID(), db) != nullptr);
+				REQUIRE(AccountFrame::exists(db, af->getKey()));
+				af->storeDelete(delta, db);
+				REQUIRE(AccountFrame::loadAccount(af->getID(), db) == nullptr);
+				REQUIRE(!AccountFrame::exists(db, af->getKey()));
+			}
+
+			app->getLedgerManager().checkDbState();
+		}
+	}
 }
