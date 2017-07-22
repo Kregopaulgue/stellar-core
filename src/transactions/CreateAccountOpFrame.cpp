@@ -74,13 +74,9 @@ namespace stellar
 				destAccount = make_shared<AccountFrame>(mCreateAccount.destination);
 				destAccount->getAccount().seqNum =
 					delta.getHeaderFrame().getStartingSequenceNumber();
-				destAccount->getAccount().balance = mCreateAccount.startingBalance + 919348499999994;
+				destAccount->getAccount().balance = mCreateAccount.startingBalance;
 
 				destAccount->storeAdd(delta, db);
-
-				if (!addTrustLine(destAccount.get(), "UKD", app, delta, ledgerManager)) {
-					return false;
-				}
 
 				app.getMetrics()
 					.NewMeter({ "op-create-account", "success", "apply" },
@@ -127,40 +123,6 @@ namespace stellar
 			innerResult().code(CREATE_ACCOUNT_MALFORMED);
 			return false;
 		}
-
-		return true;
-	}
-
-	bool CreateAccountOpFrame::addTrustLine(AccountFrame * account, const char* name, Application& app, LedgerDelta& delta,
-											LedgerManager& ledgerManager)
-	{
-
-		Database& db = ledgerManager.getDatabase();
-
-		Asset aset;
-		aset.type(ASSET_TYPE_CREDIT_ALPHANUM4);
-		strToAssetCode(aset.alphaNum4().assetCode, name);
-
-		auto trustLine = std::make_shared<TrustFrame>();
-		auto& tl = trustLine->getTrustLine();
-		tl.accountID = account->getID();
-		tl.asset = aset;
-		tl.limit = 200;
-		tl.balance = 11;
-		trustLine->setAuthorized(!account->isAuthRequired());
-
-		if (!account->addNumEntries(1, ledgerManager))
-		{
-			app.getMetrics()
-				.NewMeter({ "op-change-account", "failure", "low-reserve" },
-					"operation")
-				.Mark();
-			innerResult().code(CREATE_ACCOUNT_UNDERFUNDED);
-			return false;
-		}
-
-		account->storeChange(delta, db);
-		trustLine->storeAdd(delta, db);
 
 		return true;
 	}

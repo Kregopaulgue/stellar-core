@@ -9,31 +9,27 @@
 namespace stellar
 {
 
-class CreateAccountOpFrame : public OperationFrame
-{
-    CreateAccountResult&
-    innerResult()
-    {
-        return mResult.tr().createAccountResult();
-    }
-    CreateAccountOp const& mCreateAccount;
+	class CreateAccountOpFrame : public OperationFrame
+	{
+		CreateAccountResult&
+			innerResult()
+		{
+			return mResult.tr().createAccountResult();
+		}
+		CreateAccountOp const& mCreateAccount;
 
-  public:
-    CreateAccountOpFrame(Operation const& op, OperationResult& res,
-                         TransactionFrame& parentTx);
+	public:
+		CreateAccountOpFrame(Operation const& op, OperationResult& res,
+			TransactionFrame& parentTx);
 
-    bool doApply(Application& app, LedgerDelta& delta,
-                 LedgerManager& ledgerManager) override;
-    bool doCheckValid(Application& app) override;
+		bool doApply(Application& app, LedgerDelta& delta,
+			LedgerManager& ledgerManager) override;
+		bool doCheckValid(Application& app) override;
 
-    static CreateAccountResultCode
-    getInnerCode(OperationResult const& res)
-    {
-        return res.tr().createAccountResult().code();
-    }
-
-  private:
-	  bool addTrustLine(AccountFrame* account, const char* name, Application& app, LedgerDelta& delta,
-						LedgerManager& ledgerManager);
-};
+		static CreateAccountResultCode
+			getInnerCode(OperationResult const& res)
+		{
+			return res.tr().createAccountResult().code();
+		}
+	};
 }
