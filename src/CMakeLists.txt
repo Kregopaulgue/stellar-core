@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.8)
 
 project(core)
 
+
+add_definitions(
+        -DHAVE_CONFIG_H
+        -DUSE_POSTGRES
+        -DASIO_STANDALONE
+        -DASIO_SEPARATE_COMPILATION
+        -DASIO_ERROR_CATEGORY_NOEXCEPT=noexcept
+        )
+
+if(NOT ${CMAKE_COMPILER_IS_GNUCXX})
+
 add_definitions(
         -DASIO_STANDALONE
         -DNOMINMAX
@@ -17,6 +28,13 @@ add_definitions(
         -DUSE_POSTGRES
         )
 
+else()
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O2 -Wall -Wno-unused-command-line-argument -Wno-unused-local-typedef -Wno-unknown-warning-option -Werror=unused-result")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2 -std=c++11  -pthread -Wall -Wno-unused-command-line-argument -Wno-unused-local-typedef -Wno-unknown-warning-option -Werror=unused-result")
+endif()
+
+
+if(NOT ${CMAKE_COMPILER_IS_GNUCXX})
 add_definitions(
         /wd4060
         /wd4127
@@ -35,24 +53,115 @@ add_definitions(
         /wd4307
         /Gd
 )
+endif()
 
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP /GS /W4 /wd4060 /wd4100 /wd4127 /wd4324 /wd4408 /wd4510 /wd4512 /wd4582 /wd4583 /wd4592 /Gy /Zc:wchar_t")
-#
-include_directories($ENV{POSTGRES_PATH_INCLUDE})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(../)
 include_directories(../lib)
 include_directories(../lib/xdrpp)
-include_directories(../lib/xdrpp/xdrpp/)
 include_directories(../lib/asio/include)
 include_directories(../lib/libmedida/src)
-include_directories(../lib/libsodium/src/libsodium/include)
 include_directories(../lib/soci/src/core)
-include_directories(../lib/autocheck/include)
 include_directories(../lib/cereal/include)
+include_directories(../lib/libsodium/src/libsodium/include)
+include_directories(../lib/autocheck/include)
 include_directories(../Builds/VisualStudio2015/src/generated)
 
+set(SRC_HEADERS_FILES
+        bucket/Bucket.h
+        bucket/BucketApplicator.h
+        bucket/BucketList.h bucket/BucketManager.h
+        bucket/BucketManagerImpl.h bucket/FutureBucket.h
+        bucket/LedgerCmp.h crypto/ByteSlice.h crypto/ECDH.h
+        crypto/Hex.h crypto/KeyUtils.h crypto/Random.h crypto/SHA.h
+        crypto/SecretKey.h crypto/SignerKey.h crypto/SignerKeyUtils.h
+        crypto/StrKey.h database/AccountQueries.h database/Database.h
+        database/DatabaseConnectionString.h herder/Herder.h
+        herder/HerderImpl.h herder/HerderUtils.h
+        herder/LedgerCloseData.h herder/PendingEnvelopes.h
+        herder/TxSetFrame.h history/CatchupManager.h
+        history/CatchupManagerImpl.h history/FileTransferInfo.h
+        history/HistoryArchive.h history/HistoryManager.h
+        history/HistoryManagerImpl.h history/InferredQuorum.h
+        history/StateSnapshot.h historywork/ApplyBucketsWork.h
+        historywork/ApplyLedgerChainWork.h
+        historywork/BatchDownloadWork.h
+        historywork/BucketDownloadWork.h
+        historywork/CatchupCompleteImmediateWork.h
+        historywork/CatchupCompleteWork.h
+        historywork/CatchupMinimalWork.h
+        historywork/CatchupRecentWork.h
+        historywork/CatchupTransactionsWork.h
+        historywork/CatchupWork.h historywork/FetchRecentQsetsWork.h
+        historywork/GetAndUnzipRemoteFileWork.h
+        historywork/GetHistoryArchiveStateWork.h
+        historywork/GetRemoteFileWork.h historywork/GunzipFileWork.h
+        historywork/GzipFileWork.h historywork/MakeRemoteDirWork.h
+        historywork/PublishWork.h
+        historywork/PutHistoryArchiveStateWork.h
+        historywork/PutRemoteFileWork.h
+        historywork/PutSnapshotFilesWork.h
+        historywork/RepairMissingBucketsWork.h
+        historywork/ResolveSnapshotWork.h historywork/RunCommandWork.h
+        historywork/VerifyBucketWork.h
+        historywork/VerifyLedgerChainWork.h
+        historywork/WriteSnapshotWork.h
+        invariant/CacheIsConsistentWithDatabase.h
+        invariant/ChangedAccountsSubnetriesCountIsValid.h
+        invariant/Invariant.h invariant/InvariantDoesNotHold.h
+        invariant/Invariants.h
+        invariant/TotalCoinsEqualsBalancesPlusFeePool.h
+        ledger/AccountFrame.h ledger/DataFrame.h ledger/EntryFrame.h
+        ledger/LedgerDelta.h ledger/LedgerHeaderFrame.h
+        ledger/LedgerManager.h ledger/LedgerManagerImpl.h
+        ledger/LedgerTestUtils.h ledger/OfferFrame.h
+        ledger/SyncingLedgerChain.h ledger/TrustFrame.h
+        main/Application.h main/ApplicationImpl.h
+        main/CommandHandler.h main/Config.h main/ExternalQueue.h
+        main/NtpSynchronizationChecker.h main/PersistentState.h
+        main/dumpxdr.h main/fuzz.h overlay/BanManager.h
+        overlay/BanManagerImpl.h overlay/Floodgate.h
+        overlay/ItemFetcher.h overlay/LoadManager.h
+        overlay/LoopbackPeer.h overlay/OverlayManager.h
+        overlay/OverlayManagerImpl.h overlay/Peer.h overlay/PeerAuth.h
+        overlay/PeerDoor.h overlay/PeerRecord.h overlay/StellarXDR.h
+        overlay/TCPPeer.h overlay/Tracker.h process/ProcessManager.h
+        process/ProcessManagerImpl.h scp/BallotProtocol.h
+        scp/LocalNode.h scp/NominationProtocol.h scp/QuorumSetUtils.h
+        scp/SCP.h scp/SCPDriver.h scp/Slot.h
+        simulation/LoadGenerator.h simulation/Simulation.h
+        simulation/Topologies.h test/TestAccount.h
+        test/TestExceptions.h test/TestPrinter.h test/TestUtils.h
+        test/TxTests.h test/test.h transactions/AllowTrustOpFrame.h
+        transactions/ChangeTrustOpFrame.h
+        transactions/CreateAccountOpFrame.h
+        transactions/CreatePassiveOfferOpFrame.h
+        transactions/InflationOpFrame.h
+        transactions/ManageDataOpFrame.h
+        transactions/ManageOfferOpFrame.h transactions/MergeOpFrame.h
+        transactions/OfferExchange.h transactions/OperationFrame.h
+        transactions/PathPaymentOpFrame.h
+        transactions/PaymentOpFrame.h transactions/SetOptionsOpFrame.h
+        transactions/SignatureChecker.h transactions/SignatureUtils.h
+        transactions/TransactionFrame.h util/Algoritm.h
+        util/BitsetEnumerator.h util/Format.h util/Fs.h
+        util/GlobalChecks.h util/HashOfHash.h util/Logging.h
+        util/Math.h util/NonCopyable.h util/NtpClient.h util/NtpWork.h
+        util/SecretValue.h util/SociNoWarnings.h util/StatusManager.h
+        util/Timer.h util/TmpDir.h util/XDRStream.h util/asio.h
+        util/make_unique.h util/must_use.h util/optional.h
+        util/types.h work/Work.h work/WorkManager.h
+        work/WorkManagerImpl.h work/WorkParent.h
+        )
+
+if(NOT ${CMAKE_COMPILER_IS_GNUCXX})
+        include_directories(../Builds/VisualStudio2015/src/generated)
+else()
+endif()
+
+
 set(STELLAR_CORE_SYSTEM_SOURCE_FILES
+        ../config.h
         ../lib/util/easylogging++.cc
         bucket/Bucket.cpp
         bucket/BucketApplicator.cpp
@@ -257,54 +366,40 @@ set(STELLAR_CORE_MAIN_SOURCE_FILES
         work/WorkTests.cpp
         )
 
-set(XDRC_COMMAND ${CMAKE_BINARY_DIR}/lib/xdrpp/xdrc/xdrc.exe)
+if(${CMAKE_HOST_WIN32})
+        set(XDRC_COMMAND ${CMAKE_BINARY_DIR}/lib/xdrpp/xdrc/xdrc.exe)
+else()
+        set(XDRC_COMMAND ../lib/xdrpp/xdrc/xdrc)
+endif()
 
+set(OUTPUT_SOURCE_H_XDR_FILES ${CMAKE_CURRENT_SOURCE_DIR}/xdr)
+
+message(INFO ${XDRC_COMMAND})
 # break into sections
-add_custom_command(OUTPUT out
-        COMMAND ${XDRC_COMMAND} -hh -o Stellar-ledger.h Stellar-ledger.x
-        COMMAND ${XDRC_COMMAND} -hh -o Stellar-transaction.h Stellar-transaction.x
-        COMMAND ${XDRC_COMMAND} -hh -o Stellar-ledger-entries.h Stellar-ledger-entries.x
-        COMMAND ${XDRC_COMMAND} -hh -o Stellar-types.h Stellar-types.x
-        COMMAND ${XDRC_COMMAND} -hh -o Stellar-overlay.h Stellar-overlay.x
-        COMMAND ${XDRC_COMMAND} -hh -o Stellar-SCP.h Stellar-SCP.x
-        DEPENDS
-        xdr/Stellar-ledger.x
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/xdr
-        )
+
+set(XDRS_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+
+include(gen_xdr.cmake)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xdr)
 
-find_library(WSOCK32_LIBRARY wsock32)
-find_library(WS2_32_LIBRARY ws2_32)
-find_library(PSAPI psapi)
-
 find_package(PostgreSQL REQUIRED)
-find_library(LIBPSQ libpq)
 
-if(NOT POSTGRESQL_FOUND)
-        message(SEND_ERROR "NOT FOUND postgresql")
+if(NOT ${CMAKE_COMPILER_IS_GNUCXX})
+        find_library(WSOCK32_LIBRARY wsock32)
+        find_library(WS2_32_LIBRARY ws2_32)
+        find_library(PSAPI psapi)
+set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} /FORCE:MULTIPLE /LTCG")
 endif()
+add_executable(core ${STELLAR_CORE_SYSTEM_SOURCE_FILES} ${STELLAR_CORE_MAIN_SOURCE_FILES} ${SRC_HEADERS_FILES} ${SRC_X_FILES})# xdr)
 
-if(POSTGRESQL_FOUND)
-        message(INFO " FOUND POSGRESQ")
-endif()
-
-message(INFO ${POSTGRESQL_LIBRARIES})
-
-set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} /FORCE:MULTIPLE /LTCG" )
-
-add_executable(core ${STELLAR_CORE_SYSTEM_SOURCE_FILES} ${STELLAR_CORE_MAIN_SOURCE_FILES})
-
-target_link_libraries(core ${LIBPSQ})
-target_link_libraries(core wsock32 ws2_32)
-target_link_libraries(core ${PSQLIBS})
+target_link_libraries(core ${PostgreSQL_LIBRARIES})
 target_link_libraries(core soci)
 target_link_libraries(core asio)
 target_link_libraries(core medida)
 target_link_libraries(core sodium)
-target_link_libraries(core sqlite)
+target_link_libraries(core -lm -ldl sqlite)
 target_link_libraries(core soci_sqlite3)
 target_link_libraries(core soci_postgresql)
 target_link_libraries(core xdrpp)
 target_link_libraries(core fmt)
-target_link_libraries(core psapi)

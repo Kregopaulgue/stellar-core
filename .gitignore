@@ -40,8 +40,6 @@
 /src/stellar-core
 /buckets
 /compile
-/config.h
-/config.h.in
 /config.log
 /config.status
 /config.guess
@@ -76,4 +74,12 @@
 **/x64/*
 *.vcxproj.user
 *.opendb
+
+.idea/.name
+.idea/misc.xml
+.idea/modules.xml
+.idea/stellar-core.iml
+.idea/vcs.xml
+.idea/workspace.xml
+cmake-build-release/
 
