@@ -366,18 +366,12 @@ set(STELLAR_CORE_MAIN_SOURCE_FILES
         work/WorkTests.cpp
         )
 
-if(${CMAKE_HOST_WIN32})
-        set(XDRC_COMMAND ${CMAKE_BINARY_DIR}/lib/xdrpp/xdrc/xdrc.exe)
-else()
-        set(XDRC_COMMAND ../lib/xdrpp/xdrc/xdrc)
-endif()
-
 set(OUTPUT_SOURCE_H_XDR_FILES ${CMAKE_CURRENT_SOURCE_DIR}/xdr)
 
 message(INFO ${XDRC_COMMAND})
 # break into sections
 
-set(XDRS_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(XDRS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/xdr)
 
 include(gen_xdr.cmake)
 
@@ -391,7 +385,7 @@ if(NOT ${CMAKE_COMPILER_IS_GNUCXX})
         find_library(PSAPI psapi)
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} /FORCE:MULTIPLE /LTCG")
 endif()
-add_executable(core ${STELLAR_CORE_SYSTEM_SOURCE_FILES} ${STELLAR_CORE_MAIN_SOURCE_FILES} ${SRC_HEADERS_FILES} ${SRC_X_FILES})# xdr)
+add_executable(core ${STELLAR_CORE_SYSTEM_SOURCE_FILES} ${STELLAR_CORE_MAIN_SOURCE_FILES} ${SRC_HEADERS_FILES} ${OUTPUT_SOURCE_H_XDR_FILES} ${SRC_X_FILES})# xdr)
 
 target_link_libraries(core ${PostgreSQL_LIBRARIES})
 target_link_libraries(core soci)

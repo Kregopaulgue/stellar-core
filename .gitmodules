@@ -3,7 +3,7 @@
 	url = https://github.com/BlackBeetleHub/libsodium.git
 [submodule "lib/xdrpp"]
 	path = lib/xdrpp
-	url = https://github.com/xdrpp/xdrpp.git
+	url = https://github.com/BlackBeetleHub/xdrpp.git
 [submodule "lib/libmedida"]
 	path = lib/libmedida
 	url = https://github.com/BlackBeetleHub/medida.git
