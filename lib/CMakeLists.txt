@@ -19,6 +19,20 @@ include_directories(soci/src/backends/postgresql)
 include_directories(libmedida/src)
 include_directories(util)
 
+find_path(PostgreSQL_TYPE_INCLUDE_DIR
+        NAMES catalog/pg_type.h
+        PATHS
+        # Look in other places.
+        ${PostgreSQL_ROOT_DIRECTORIES}
+        PATH_SUFFIXES
+        postgresql
+        pgsql/server
+        postgresql/server
+        include/server
+        # Help the user find it if we cannot.
+        DOC "The ${PostgreSQL_INCLUDE_DIR_MESSAGE}"
+        )
+
 #linux (ubuntu)
 if(${CMAKE_COMPILER_IS_GNUCXX})
     find_package(PostgreSQL REQUIRED)
