@@ -1,5 +1,7 @@
 find_package(PostgreSQL REQUIRED)
 
+message(${PostgreSQL_LIBRARIES})
+
 target_link_libraries(core ${PostgreSQL_LIBRARIES})
 target_link_libraries(core pq)
 target_link_libraries(core soci)

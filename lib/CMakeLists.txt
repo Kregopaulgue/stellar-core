@@ -19,25 +19,13 @@ include_directories(soci/src/backends/postgresql)
 include_directories(libmedida/src)
 include_directories(util)
 
-find_path(PostgreSQL_TYPE_INCLUDE_DIR
-        NAMES catalog/pg_type.h
-        PATHS
-        # Look in other places.
-        ${PostgreSQL_ROOT_DIRECTORIES}
-        PATH_SUFFIXES
-        postgresql
-        pgsql/server
-        postgresql/server
-        include/server
-        # Help the user find it if we cannot.
-        DOC "The ${PostgreSQL_INCLUDE_DIR_MESSAGE}"
-        )
-
 #linux (ubuntu)
 if(${CMAKE_COMPILER_IS_GNUCXX})
-    find_package(PostgreSQL REQUIRED)
+    message(${PostgreSQL_INCLUDE_DIRS})
+    message(${PostgreSQL_TYPE_INCLUDE_DIR})
     include_directories(${PostgreSQL_INCLUDE_DIRS})
 endif()
+
 set(SOURCE_LIB3RDPARTY
         util/basen.h
         util/cpptoml.h
@@ -224,6 +212,8 @@ endif()
 add_library(soci STATIC ${SOURCE_LIBSOCI})
 add_library(3rdparty STATIC ${SOURCE_LIB3RDPARTY})
 add_library(medida STATIC ${SOURCE_LIBMEDIDA})
+
+message(INFO "PostgreSQL_LIBRARIES: ${PostgreSQL_LIBRARIES}")
 
 if(${CMAKE_COMPILER_IS_GNUCXX})
     target_link_libraries(soci ${PostgreSQL_LIBRARIES})

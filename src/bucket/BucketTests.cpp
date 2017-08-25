@@ -5,8 +5,6 @@
 // ASIO is somewhat particular about when it gets included -- it wants to be the
 // first to include <windows.h> -- so we try to include it before everything
 // else.
-#pragma once
-//change delete this one
 
 #include "util/asio.h"
 
