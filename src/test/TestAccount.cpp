@@ -84,13 +84,6 @@ TestAccount::create(SecretKey const& secretKey, uint64_t initialBalance)
     }
 
     REQUIRE(loadAccount(secretKey.getPublicKey(), mApp));
-	auto testAcc = TestAccount::createRoot(mApp);
-	Database& db = mApp.getDatabase();
-	Asset asset;
-	asset.type(ASSET_TYPE_CREDIT_ALPHANUM4);
-	const char * code = "UKD";
-	strToAssetCode(asset.alphaNum4().assetCode, code);
-	REQUIRE(TrustFrame::loadTrustLine(secretKey.getPublicKey(), asset, db));
     return TestAccount{mApp, secretKey};
 }
 
