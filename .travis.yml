@@ -1,14 +1,19 @@
 language: cpp
 sudo: false
 
+os:
+  - linux
+  - osx
+
 compiler:
-- clang
-- gcc
+  - clang
+  - gcc
 
 addons:
   postgresql: "9.3"
   apt:
     sources:
+    - george-edison55-precise-backports
     - llvm-toolchain-precise-3.5
     - ubuntu-toolchain-r-test
     packages:
@@ -23,14 +28,12 @@ addons:
     - libstdc++6
     - libtool
     - pkg-config
+    - cmake-data
+    - cmake
+    - make
 
 script: ./travis-build.sh
 
-cache:
-  directories:
-  - $HOME/.ccache
-  - .libs
-  
 branches:
  only:
- - auto
+ - cmake_linux

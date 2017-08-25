@@ -39,30 +39,17 @@ do
     psql -c "create database test$i;"
 done
 
-committer_of(){
-    local c=$(git cat-file -p "$1" 2> /dev/null \
-	| sed -ne '/^committer \([^<]*[^ <]\)  *<.*>.*/{s//\1/p; q;}')
-    test -n "$c" -a Latobarita != "$c" && echo "$c"
-}
-committer=$(committer_of HEAD) \
-    || committer=$(committer_of HEAD^2) \
-    || committer=$(committer_of HEAD^1) \
-    || committer=Latobarita
+git submodule init
 
-case $committer in
-    "David Mazieres")
-        config_flags="--enable-asan --enable-ccache"
-	;;
-    *)
-	config_flags="--enable-asan --enable-ccache --enable-sdfprefs"
-	;;
-esac
+git submodule update
 
-echo "committer = $committer, config_flags = $config_flags"
+cmake --version
 
-ccache -s
-./autogen.sh
-./configure $config_flags
-make
-ccache -s
-make check
+mkdir build
+cd build
+cmake ..
+cmake --build .
+
+#test
+cd src
+./core --test [tx]

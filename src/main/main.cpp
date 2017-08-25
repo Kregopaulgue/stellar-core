@@ -470,7 +470,6 @@ main(int argc, char* const* argv)
 	std::string loadXdrBucket = "";
 	std::vector<std::string> newHistories;
 	std::vector<std::string> metrics;
-	system("pwd");
 	int opt;
 	while ((opt = getopt_long_only(argc, argv, "c:", stellar_core_options,
 		nullptr)) != -1)
