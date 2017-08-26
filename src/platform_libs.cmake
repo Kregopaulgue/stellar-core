@@ -1,4 +1,6 @@
-find_package(PostgreSQL REQUIRED)
+find_package(PostgreSQL)
+
+#if()
 
 message(${PostgreSQL_LIBRARIES})
 
