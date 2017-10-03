@@ -83,6 +83,22 @@ struct LedgerEntryIdCmp
                 return ad.dataName < bd.dataName;
             }
         }
+        case SIGNERS_ACCESS:
+        {
+            auto const& as = a.signersAccess();
+            auto const& bs = b.signersAccess();
+            if (as.accessGiverID < bs.accessGiverID)
+            {
+                return true;
+            }
+            if (bs.accessGiverID < as.accessGiverID)
+            {
+                return false;
+            }
+            {
+                return as.accessTakerID < bs.accessTakerID;
+            }
+        }
         }
         return false;
     }

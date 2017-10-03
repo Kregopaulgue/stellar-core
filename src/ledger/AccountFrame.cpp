@@ -245,7 +245,9 @@ AccountFrame::loadAccount(AccountID const& accountID, Database& db)
     st.exchange(into(homeDomain));
     st.exchange(into(thresholds));
     st.exchange(into(account.flags));
+    uint32 lastModifiedSeq = res->getLastModified();
     st.exchange(into(res->getLastModified()));
+    lastModifiedSeq = res->getLastModified();
     st.exchange(use(actIDStrKey));
     st.define_and_bind();
     {
@@ -426,6 +428,7 @@ AccountFrame::storeUpdate(LedgerDelta& delta, Database& db, bool insert)
     string thresholds(bn::encode_b64(mAccountEntry.thresholds));
 
     {
+        uint32 t = getLastModified();
         soci::statement& st = prep.statement();
         st.exchange(use(actIDStrKey, "id"));
         st.exchange(use(mAccountEntry.balance, "v1"));
@@ -663,6 +666,7 @@ AccountFrame::checkDB(Database& db)
         {
             AccountID aid(KeyUtils::fromStrKey<PublicKey>(id));
             auto it = state.find(aid);
+            int signersSize = it->second->mAccountEntry.signers.size();
             if (it == state.end())
             {
                 throw std::runtime_error(fmt::format(

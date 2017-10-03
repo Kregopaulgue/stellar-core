@@ -9,6 +9,7 @@
 #include "ledger/AccountFrame.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
+#include "ledger/SignersAccessFrame.h"
 #include "overlay/StellarXDR.h"
 #include "test/TestPrinter.h"
 #include "util/optional.h"
@@ -57,6 +58,9 @@ OfferFrame::pointer loadOffer(PublicKey const& k, uint64 offerID,
 
 TrustFrame::pointer loadTrustLine(SecretKey const& k, Asset const& asset,
                                   Application& app, bool mustExist = true);
+
+SignersAccessFrame::pointer loadSignersAccess(PublicKey const& accessGiverID,
+                              PublicKey const& accessTakerID, Application& app, bool mustExist);
 
 xdr::xvector<Signer, 20> getAccountSigners(PublicKey const& k,
                                            Application& app);
@@ -124,6 +128,9 @@ uint64_t applyCreatePassiveOffer(Application& app, SecretKey const& source,
 Operation setOptions(AccountID* inflationDest, uint32_t* setFlags,
                      uint32_t* clearFlags, ThresholdSetter* thrs,
                      Signer* signer, std::string* homeDomain);
+
+Operation giveSignersAccess(AccountID friendID);
+Operation setSigners(AccountID* giverID, Signer* signer);
 
 Asset makeAsset(SecretKey const& issuer, std::string const& code);
 

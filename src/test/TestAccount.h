@@ -6,6 +6,7 @@
 
 #include "crypto/SecretKey.h"
 #include "ledger/OfferFrame.h"
+#include "ledger/SignersAccessFrame.h"
 #include "transactions/TransactionFrame.h"
 #include "xdr/Stellar-ledger-entries.h"
 #include "xdr/Stellar-transaction.h"
@@ -45,6 +46,12 @@ class TestAccount
     void setOptions(AccountID* inflationDest, uint32_t* setFlags,
                     uint32_t* clearFlags, txtest::ThresholdSetter* thrs,
                     Signer* signer, std::string* homeDomain);
+
+    //taker - account taking access
+    void giveSignersAccess(AccountID friendID);
+    SignersAccessFrame::pointer loadSignersAccess(AccountID friendID);
+
+    void setSigners(AccountID* giverID, Signer* signer);
 
     void manageData(std::string const& name, DataValue* value);
 

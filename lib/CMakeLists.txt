@@ -21,8 +21,8 @@ include_directories(util)
 
 #linux (ubuntu)
 if(${CMAKE_COMPILER_IS_GNUCXX})
-    message(${PostgreSQL_INCLUDE_DIRS})
-    message(${PostgreSQL_TYPE_INCLUDE_DIR})
+    #message(${PostgreSQL_INCLUDE_DIRS})
+    #message(${PostgreSQL_TYPE_INCLUDE_DIR})
     include_directories(${PostgreSQL_INCLUDE_DIRS})
 endif()
 

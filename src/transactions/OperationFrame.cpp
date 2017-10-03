@@ -19,6 +19,8 @@
 #include "transactions/PaymentOpFrame.h"
 #include "transactions/SetOptionsOpFrame.h"
 #include "transactions/TransactionFrame.h"
+#include "transactions/GiveSignersAccessOpFrame.h"
+#include "transactions/SetSignersOpFrame.h"
 #include "util/Logging.h"
 #include "xdrpp/marshal.h"
 #include <string>
@@ -81,6 +83,10 @@ OperationFrame::makeHelper(Operation const& op, OperationResult& res,
         return shared_ptr<OperationFrame>(new InflationOpFrame(op, res, tx));
     case MANAGE_DATA:
         return shared_ptr<OperationFrame>(new ManageDataOpFrame(op, res, tx));
+    case GIVE_ACCESS:
+        return shared_ptr<OperationFrame>(new GiveSignersAccessOpFrame(op, res, tx));
+    case SET_SIGNERS:
+        return shared_ptr<OperationFrame>(new SetSignersOpFrame(op, res, tx));
 
     default:
         ostringstream err;
