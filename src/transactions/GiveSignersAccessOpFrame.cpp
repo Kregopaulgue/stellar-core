@@ -1,0 +1,100 @@
+//
+// Created by krego on 06.09.17.
+//
+
+#include "util/asio.h"
+#include "GiveSignersAccessOpFrame.h"
+#include "TransactionFrame.h"
+#include "OperationFrame.h"
+#include "database/Database.h"
+#include "ledger/SignersAccessFrame.h"
+#include "ledger/LedgerDelta.h"
+#include "ledger/OfferFrame.h"
+#include "ledger/TrustFrame.h"
+#include "main/Application.h"
+#include "medida/meter.h"
+#include "medida/metrics_registry.h"
+#include "transactions/PathPaymentOpFrame.h"
+#include "util/Logging.h"
+#include <algorithm>
+
+namespace stellar
+{
+
+using namespace std;
+using xdr::operator==;
+
+GiveSignersAccessOpFrame::GiveSignersAccessOpFrame(Operation const &op, OperationResult &res,
+                                                   TransactionFrame &parentTx)
+    : OperationFrame(op, res, parentTx), mGiveSignersAccess(mOperation.body.giveSignersAccessOp())
+{
+}
+
+bool
+GiveSignersAccessOpFrame::doApply(Application &app, LedgerDelta &delta, LedgerManager &ledgerManager)
+{
+    AccountID accessGiverID, accessTakerID;
+
+    SignersAccessFrame::pointer signersAccess;
+
+    accessGiverID = mSourceAccount->getID();
+    accessTakerID = mGiveSignersAccess.friendID;
+
+    if (accessGiverID == accessTakerID)
+    {
+        app.getMetrics()
+            .NewMeter({ "op-give-signers-access", "failure", "friend-is-source" },
+                "operation")
+            .Mark();
+        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE);
+        return false;
+    }
+
+    Database& db = ledgerManager.getDatabase();
+    AccountFrame::pointer accessTaker;
+    accessTaker =
+        AccountFrame::loadAccount(delta, accessTakerID, db);
+
+    if (accessTaker)
+    {
+        signersAccess = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
+
+        signersAccess->storeAdd(delta, db);
+
+        app.getMetrics()
+                .NewMeter({ "op-give-signers-access", "success", "apply" },
+                          "operation")
+                .Mark();
+        innerResult().code(GIVE_SIGNERS_ACCESS_SUCCESS);
+        return true;
+
+    }
+    else
+    {
+        app.getMetrics()
+                .NewMeter({ "op-give-signers-access", "failure", "friend-account-doesnt-exist" },
+                          "operation")
+                .Mark();
+        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
+        return false;
+    }
+}
+
+bool
+GiveSignersAccessOpFrame::doCheckValid(Application& app)
+{
+
+    if (mGiveSignersAccess.friendID == getSourceID())
+    {
+        app.getMetrics()
+                .NewMeter({ "op-give-signers-access", "invalid",
+                            "friend-account-cant-be-source-account" },
+                          "operation")
+                .Mark();
+        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE);
+        return false;
+    }
+
+    return true;
+}
+}
