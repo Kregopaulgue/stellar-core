@@ -172,8 +172,8 @@ struct GiveSignersAccessOp
 
 struct SetSignersOp
 {
-    AccountID* accessGiverID; //id of the one who gives signers access
-    Signer* signer;           //signer to deal with signers
+    AccountID accessGiverID; //id of the one who gives signers access
+    Signer signer;           //signer to deal with signers
 };
 
 /* Creates, updates or deletes a trust line

@@ -31,7 +31,7 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
 
     AccountID accessGiverID, accessTakerID;
 
-    accessGiverID = *(mSetSigners.accessGiverID);
+    accessGiverID = mSetSigners.accessGiverID;
     accessTakerID = mSourceAccount->getID();
 
     SignersAccessFrame::pointer signersAccess;
@@ -84,8 +84,7 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
         return false;
     }
 
-    Signer& signerToAdd = *mSetSigners.signer;
-    account.signers.push_back(*mSetSigners.signer);
+    account.signers.push_back(mSetSigners.signer);
     accessGiverAccount->setUpdateSigners();
 
 
@@ -101,7 +100,7 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
 bool
 SetSignersOpFrame::doCheckValid(Application& app)
 {
-    AccountID accessGiverID = *(mSetSigners.accessGiverID);
+    AccountID accessGiverID = mSetSigners.accessGiverID;
     AccountID accessTakerID = getSourceID();
 
     if (accessGiverID == accessTakerID)

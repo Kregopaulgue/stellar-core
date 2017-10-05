@@ -33,7 +33,6 @@ TEST_CASE("give signers access", "[tx][givesignersaccess]")
 
     app.start();
 
-    //set up world
     app.getLedgerManager().setCurrentLedgerVersion(0);
 
     auto root = TestAccount::createRoot(app);
@@ -66,6 +65,16 @@ TEST_CASE("give signers access", "[tx][givesignersaccess]")
 
             REQUIRE(accessGiverID == signersAccess->getAccessGiverID());
             REQUIRE(accessTakerID == signersAccess->getAccessTakerID());
+        });
+    }
+
+    SECTION("signers access already exists")
+    {
+        for_all_versions(app, [&]{
+            accessGiver.giveSignersAccess(accessTakerID);
+            REQUIRE_THROWS_AS(
+                    accessGiver.giveSignersAccess(accessTakerID),
+                    ex_GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
         });
     }
 

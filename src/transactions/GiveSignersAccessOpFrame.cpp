@@ -55,18 +55,6 @@ GiveSignersAccessOpFrame::doApply(Application &app, LedgerDelta &delta, LedgerMa
         return false;
     }
 
-    SignersAccessFrame::pointer currentSignersAccess;
-    currentSignersAccess =
-        SignersAccessFrame::loadSignersAccess(accessGiverID, accessTakerID, db, &delta);
-
-    if(currentSignersAccess) {
-        app.getMetrics()
-                .NewMeter({ "op-give-signers-access", "failure", "such-signers-access-entry-exists" },
-                          "operation")
-                .Mark();
-        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
-    }
-
     signersAccess = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
 
     signersAccess->storeAdd(delta, db);
@@ -91,6 +79,19 @@ GiveSignersAccessOpFrame::doCheckValid(Application& app)
                           "operation")
                 .Mark();
         innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE);
+        return false;
+    }
+
+    SignersAccessFrame::pointer currentSignersAccess;
+    currentSignersAccess =
+            SignersAccessFrame::loadSignersAccess(getSourceID(), mGiveSignersAccess.friendID, app.getDatabase());
+
+    if(currentSignersAccess) {
+        app.getMetrics()
+                .NewMeter({ "op-give-signers-access", "failure", "such-signers-access-entry-exists" },
+                          "operation")
+                .Mark();
+        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
         return false;
     }
 

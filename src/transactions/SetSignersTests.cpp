@@ -65,7 +65,7 @@ TEST_CASE("set signers", "[tx][setsigners]")
         {
             for_all_versions(app, [&]{
                 REQUIRE_THROWS_AS(
-                        accessTaker.setSigners(&accessTakerID, &sk3),
+                        accessTaker.setSigners(accessTakerID, sk3),
                         ex_SET_SIGNERS_FRIEND_IS_SOURCE);
             });
         }
@@ -74,10 +74,11 @@ TEST_CASE("set signers", "[tx][setsigners]")
         {
             for_all_versions(app, [&]{
                 REQUIRE_THROWS_AS(
-                        accessTaker.setSigners(&notFriendID, &sk3),
+                        accessTaker.setSigners(notFriendID, sk3),
                         ex_SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST);
             });
         }
+
     }
 
     SECTION("Controlling signers")
@@ -88,7 +89,7 @@ TEST_CASE("set signers", "[tx][setsigners]")
 
             accessGiverAccount = loadAccount(accessGiver, app);
 
-            int signersAmount = accessGiverAccount->getAccount().signers.size();
+            unsigned long signersAmount = accessGiverAccount->getAccount().signers.size();
 
             sk1.weight = 10;
             accessGiver.setOptions(nullptr, nullptr, nullptr, &th, &sk1, nullptr);
@@ -115,9 +116,7 @@ TEST_CASE("set signers", "[tx][setsigners]")
             signersAmount = accessGiverAccount->getAccount().signers.size();
             REQUIRE(signersAmount == 2);
 
-
-            AccountID* accessGiverIDPointer = &accessGiverID;
-            accessTaker.setSigners(accessGiverIDPointer, &sk3);
+            accessTaker.setSigners(accessGiverID, sk3);
 
             accessGiverAccount = loadAccount(accessGiver, app);
             REQUIRE(accessGiverAccount->getAccount().signers.size() == 1);

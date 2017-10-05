@@ -35,7 +35,7 @@ namespace stellar
         void storeUpdateHelper(LedgerDelta& delta, Database& db, bool insert);
 
         static void loadSignersAccesses(StatementContext& prep,
-                                        std::function<void(LedgerEntry const&)> dataProcessor);
+                                        std::function<void(LedgerEntry const&)> signersAccessProcessor);
 
     public:
         typedef std::shared_ptr<SignersAccessFrame> pointer;
@@ -88,10 +88,6 @@ namespace stellar
         loadSignersAccesses(AccountID const& owner,
                             std::vector<SignersAccessFrame::pointer>& retSignersAccesses,
                             Database& db);
-
-        /*static SignersAccessFrame::pointer
-        loadSignersAccess(AccountID const& accessGiverID, AccountID const& accessTakerID,
-                          Database& db, LedgerDelta& delta);*/
 
         static SignersAccessFrame::pointer
         loadSignersAccess(AccountID const& accessGiverID, AccountID const& accessTakerID,

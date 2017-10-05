@@ -51,7 +51,7 @@ class TestAccount
     void giveSignersAccess(AccountID friendID);
     SignersAccessFrame::pointer loadSignersAccess(AccountID friendID);
 
-    void setSigners(AccountID* giverID, Signer* signer);
+    void setSigners(AccountID giverID, Signer signer);
 
     void manageData(std::string const& name, DataValue* value);
 

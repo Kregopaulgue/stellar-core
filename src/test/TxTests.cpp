@@ -597,13 +597,13 @@ giveSignersAccess(AccountID friendID)
 }
 
 Operation
-setSigners(AccountID* giverID, Signer* signer)
+setSigners(AccountID giverID, Signer signer)
 {
     Operation op;
     op.body.type(SET_SIGNERS);
     SetSignersOp& setSignersOp = op.body.setSignersOp();
-    setSignersOp.accessGiverID.activate() = *giverID;
-    setSignersOp.signer.activate() = *signer;
+    setSignersOp.accessGiverID = giverID;
+    setSignersOp.signer = signer;
     return op;
 }
 

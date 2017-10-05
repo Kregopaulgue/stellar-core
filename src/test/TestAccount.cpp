@@ -148,7 +148,7 @@ TestAccount::loadSignersAccess(AccountID friendID)
 }
 
 void
-TestAccount::setSigners(AccountID* giverID, Signer* signer)
+TestAccount::setSigners(AccountID giverID, Signer signer)
 {
     applyTx(tx({txtest::setSigners(giverID, signer)}), mApp);
 }

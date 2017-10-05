@@ -23,7 +23,7 @@ using namespace soci;
 namespace stellar
 {
     const char* SignersAccessFrame::kSQLCreateStatement1 =
-            "CREATE TABLE signersaccesses"
+            "CREATE TABLE signersaccess"
             "("
             "accessgiverid VARCHAR(56),"
             "accesstakerid VARCHAR(56),"
@@ -102,14 +102,14 @@ namespace stellar
         if (insert)
         {
             sql = std::string(
-                    "INSERT INTO signersaccesses "
+                    "INSERT INTO signersaccess "
                     "( accessgiverid, accesstakerid, lastmodified )"
                     "VALUES ( :agid, :atid, :l )");
         }
         else
         {
             sql = std::string(
-                    "UPDATE signersaccesses "
+                    "UPDATE signersaccess "
                     "SET accesstakerid = :atid WHERE accessgiverid = :agid");
         }
 
@@ -153,7 +153,7 @@ namespace stellar
         std::string accessTakerIDStrKey = KeyUtils::toStrKey(key.signersAccess().accessTakerID);
 
         auto timer = db.getDeleteTimer("signersaccess");
-        auto prep = db.getPreparedStatement( "DELETE FROM signersaccesses"
+        auto prep = db.getPreparedStatement( "DELETE FROM signersaccess"
                                              "WHERE accessgiverid= :agid AND accesstakerid= :atid");
 
         auto& st = prep.statement();
@@ -199,8 +199,7 @@ namespace stellar
         {
             auto timer = db.getSelectTimer("signersaccess-exists");
             auto prep =
-                    db.getPreparedStatement(
-                            "SELECT EXISTS (SELECT NULL FROM signersaccesses "
+                    db.getPreparedStatement("SELECT EXISTS (SELECT NULL FROM signersaccess "
                             "WHERE accessgiverid=:agid AND accesstakerid=:atid");
             auto& st = prep.statement();
             st.exchange(use(accessGiverIDStrKey));
@@ -237,28 +236,21 @@ namespace stellar
         std::string accessGiverIDStrKey = KeyUtils::toStrKey(accessGiverID);
         std::string accessTakerIDStrKey = KeyUtils::toStrKey(accessTakerID);
 
-        std::string accessGiverKey, accessTakerKey;
 
         SignersAccessFrame::pointer res = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
         SignersAccessEntry& signersAccess = res->getSignersAccess();
-        uint32 lastModifiedSeq = res->getLastModified();
 
-        //question?
         auto prep =
-                db.getPreparedStatement("SELECT accessgiverid, accesstakerid, lastmodified "
-                                                "FROM signersaccesses WHERE accessgiverid=:agid AND accesstakerid=:atid");
+                db.getPreparedStatement("SELECT lastmodified FROM signersaccess "
+                                                "WHERE accessgiverid=:agid AND accesstakerid=:atid");
         auto& st = prep.statement();
 
-        st.exchange(into(accessGiverKey));
-        st.exchange(into(accessTakerKey));
         st.exchange(into(res->getLastModified()));
 
         st.exchange(use(accessGiverIDStrKey));
         st.exchange(use(accessTakerIDStrKey));
 
         st.define_and_bind();
-
-        lastModifiedSeq = res->getLastModified();
 
         signersAccess.accessGiverID = accessGiverID;
         signersAccess.accessTakerID = accessTakerID;
@@ -311,16 +303,13 @@ namespace stellar
         SignersAccessEntry& signersAccess = res->getSignersAccess();
 
 
-        //question?
         auto prep =
                 db.getPreparedStatement("SELECT accessgiverid, accesstakerid, lastmodified "
-                                                "FROM signersaccesses WHERE accessgiverid=:agid AND accesstakerid=:atid");
+                                                "FROM signersaccess WHERE accessgiverid=:agid AND accesstakerid=:atid");
         auto& st = prep.statement();
         st.exchange(into(accessGiverIDStrKey));
         st.exchange(into(accessTakerIDStrKey));
-        uint32 lastModifiedSeq = res->getLastModified();
         st.exchange(into(res->getLastModified()));
-        lastModifiedSeq = res->getLastModified();
 
         st.exchange(use(accessGiverIDStrKey));
         st.exchange(use(accessTakerIDStrKey));
@@ -353,23 +342,10 @@ namespace stellar
         return retSignersAccess;
     }
 
-    /*SignersAccessFrame::pointer
-    SignersAccessFrame::loadSignersAccess(AccountID const& accessGiverID, AccountID const& accessTakerID,
-                                          Database& db, LedgerDelta& delta)
-    {
-        auto sa = loadSignersAccess(accessGiverID, accessTakerID, db);
-        if (sa)
-        {
-            delta.recordEntry(*sa);
-        }
-        return sa;
-    }*/
-
     void
     SignersAccessFrame::loadSignersAccesses(StatementContext& prep,
                                             std::function<void(LedgerEntry const&)> signersAccessProcessor)
     {
-        //string actIDStrKey;
 
         std::string accessGiverIDStrKey;
         std::string accessTakerIDStrKey;
@@ -383,9 +359,6 @@ namespace stellar
         SignersAccessEntry& signersAccessEntry = le.data.signersAccess();
 
         statement& st = prep.statement();
-
-        //do i need this line?
-        //st.exchange(into(actIDStrKey));
 
         st.exchange(into(accessGiverIDStrKey, accessGiverIDIndicator));
         st.exchange(into(accessTakerIDStrKey, accessTakerIDIndicator));
