@@ -7,18 +7,11 @@
 #include "TransactionFrame.h"
 #include "SetSignersOpFrame.h"
 #include "database/Database.h"
-#include "ledger/AccountFrame.h"
 #include "ledger/SignersAccessFrame.h"
 #include "ledger/LedgerDelta.h"
-#include "ledger/OfferFrame.h"
-#include "ledger/TrustFrame.h"
 #include "main/Application.h"
 #include "medida/meter.h"
 #include "medida/metrics_registry.h"
-#include "transactions/PathPaymentOpFrame.h"
-#include "util/Logging.h"
-#include "crypto/KeyUtils.h"
-#include <algorithm>
 
 namespace stellar
 {
@@ -42,14 +35,11 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
     accessTakerID = mSourceAccount->getID();
 
     SignersAccessFrame::pointer signersAccess;
-    AccountFrame::pointer accessGiverAccount;
 
     Database &db = ledgerManager.getDatabase();
 
     signersAccess =
             SignersAccessFrame::loadSignersAccess(accessGiverID, accessTakerID, db);
-    accessGiverAccount =
-            AccountFrame::loadAccount(delta, accessGiverID, db);
 
     if (!signersAccess) {
         app.getMetrics()
@@ -59,6 +49,11 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
         innerResult().code(SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST);
         return false;
     }
+
+
+    AccountFrame::pointer accessGiverAccount;
+    accessGiverAccount =
+            AccountFrame::loadAccount(delta, accessGiverID, db);
 
     if (!accessGiverAccount)
     {
@@ -70,28 +65,13 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
         return false;
     }
 
-    if (accessGiverID == accessTakerID)
-    {
-        app.getMetrics()
-                .NewMeter({ "op-set-signers", "failure", "friend-is-source" },
-                          "operation")
-                .Mark();
-        innerResult().code(SET_SIGNERS_FRIEND_IS_SOURCE);
-        return false;
-    }
-
     AccountEntry& account = accessGiverAccount->getAccount();
     auto& signers = account.signers;
 
-    //deleting signers
-    auto it = signers.begin();
-    while (it != signers.end())
-    {
-        Signer& oldSigner = *it;
-        it = signers.erase(it);
-        accessGiverAccount->addNumEntries(-1, ledgerManager);
-    }
-    accessGiverAccount->setUpdateSigners();
+    unsigned long startSignersAmount = signers.size();
+    signers.clear();
+    account.thresholds[0] = 0; //do we make the master signer zero weight?
+    accessGiverAccount->addNumEntries(-(startSignersAmount), ledgerManager);
 
 
     if(!accessGiverAccount->addNumEntries(1, ledgerManager))
@@ -104,7 +84,6 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
         return false;
     }
 
-    //adding signer
     Signer& signerToAdd = *mSetSigners.signer;
     account.signers.push_back(*mSetSigners.signer);
     accessGiverAccount->setUpdateSigners();
