@@ -40,36 +40,12 @@ GiveSignersAccessOpFrame::doApply(Application &app, LedgerDelta &delta, LedgerMa
     accessGiverID = mSourceAccount->getID();
     accessTakerID = mGiveSignersAccess.friendID;
 
-    if (accessGiverID == accessTakerID)
-    {
-        app.getMetrics()
-            .NewMeter({ "op-give-signers-access", "failure", "friend-is-source" },
-                "operation")
-            .Mark();
-        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE);
-        return false;
-    }
-
     Database& db = ledgerManager.getDatabase();
     AccountFrame::pointer accessTaker;
     accessTaker =
         AccountFrame::loadAccount(delta, accessTakerID, db);
 
-    if (accessTaker)
-    {
-        signersAccess = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
-
-        signersAccess->storeAdd(delta, db);
-
-        app.getMetrics()
-                .NewMeter({ "op-give-signers-access", "success", "apply" },
-                          "operation")
-                .Mark();
-        innerResult().code(GIVE_SIGNERS_ACCESS_SUCCESS);
-        return true;
-
-    }
-    else
+    if (!accessTaker)
     {
         app.getMetrics()
                 .NewMeter({ "op-give-signers-access", "failure", "friend-account-doesnt-exist" },
@@ -78,6 +54,29 @@ GiveSignersAccessOpFrame::doApply(Application &app, LedgerDelta &delta, LedgerMa
         innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
         return false;
     }
+
+    SignersAccessFrame::pointer currentSignersAccess;
+    currentSignersAccess =
+        SignersAccessFrame::loadSignersAccess(accessGiverID, accessTakerID, db, &delta);
+
+    if(currentSignersAccess) {
+        app.getMetrics()
+                .NewMeter({ "op-give-signers-access", "failure", "such-signers-access-entry-exists" },
+                          "operation")
+                .Mark();
+        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
+    }
+
+    signersAccess = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
+
+    signersAccess->storeAdd(delta, db);
+
+    app.getMetrics()
+            .NewMeter({ "op-give-signers-access", "success", "apply" },
+                      "operation")
+            .Mark();
+    innerResult().code(GIVE_SIGNERS_ACCESS_SUCCESS);
+    return true;
 }
 
 bool
@@ -88,7 +87,7 @@ GiveSignersAccessOpFrame::doCheckValid(Application& app)
     {
         app.getMetrics()
                 .NewMeter({ "op-give-signers-access", "invalid",
-                            "friend-account-cant-be-source-account" },
+                            "friend-is-source" },
                           "operation")
                 .Mark();
         innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE);
