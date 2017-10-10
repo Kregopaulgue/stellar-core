@@ -66,11 +66,19 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
     }
 
     AccountEntry& account = accessGiverAccount->getAccount();
-    auto& signers = account.signers;
 
-    unsigned long startSignersAmount = signers.size();
-    signers.clear();
-    account.thresholds[0] = 0; //do we make the master signer zero weight?
+    unsigned long startSignersAmount = account.signers.size();
+    account.signers.clear();
+
+
+    /* Here we make master_account 'false'
+     * for reason is when it has to pass through
+     * check for master_account, it doesnt,
+     * and master_account is not being added
+     * to signers and doesn't sign a transactions */
+
+    account.thresholds[0] = false;
+
     accessGiverAccount->addNumEntries(-(startSignersAmount), ledgerManager);
 
 
