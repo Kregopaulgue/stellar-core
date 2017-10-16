@@ -136,9 +136,9 @@ TestAccount::setOptions(AccountID* inflationDest, uint32_t* setFlags,
 }
 
 void
-TestAccount::giveSignersAccess(AccountID friendID)
+TestAccount::giveSignersAccess(AccountID friendID, int64 timeFrames)
 {
-    applyTx(tx({txtest::giveSignersAccess(friendID)}), mApp);
+    applyTx(tx({txtest::giveSignersAccess(friendID, timeFrames)}), mApp);
 }
 
 SignersAccessFrame::pointer

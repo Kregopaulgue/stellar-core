@@ -129,7 +129,7 @@ Operation setOptions(AccountID* inflationDest, uint32_t* setFlags,
                      uint32_t* clearFlags, ThresholdSetter* thrs,
                      Signer* signer, std::string* homeDomain);
 
-Operation giveSignersAccess(AccountID friendID);
+Operation giveSignersAccess(AccountID friendID, int64 timeFrames);
 Operation setSigners(AccountID giverID, Signer signer);
 
 Asset makeAsset(SecretKey const& issuer, std::string const& code);

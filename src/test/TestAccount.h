@@ -48,7 +48,8 @@ class TestAccount
                     Signer* signer, std::string* homeDomain);
 
     //taker - account taking access
-    void giveSignersAccess(AccountID friendID);
+    //check here
+    void giveSignersAccess(AccountID friendID, int64 timeFrames);
     SignersAccessFrame::pointer loadSignersAccess(AccountID friendID);
 
     void setSigners(AccountID giverID, Signer signer);

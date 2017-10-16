@@ -34,6 +34,8 @@ TEST_CASE("set signers", "[tx][setsigners]")
     auto accessTaker = root.create("A2", 10000000000);
     auto notFriend = root.create("A3", 1000000000);
 
+    int64 rightTime = time(nullptr) + INT8_MAX;
+    int64 wrongTime = time(nullptr) - INT8_MAX;
 
     AccountID accessGiverID = accessGiver.getPublicKey();
     AccountID accessTakerID = accessTaker.getPublicKey();
@@ -43,7 +45,7 @@ TEST_CASE("set signers", "[tx][setsigners]")
     std::string accessTakerIDStr = KeyUtils::toStrKey(accessTakerID);
 
 
-    accessGiver.giveSignersAccess(accessTakerID);
+    accessGiver.giveSignersAccess(accessTakerID, rightTime);
 
     SecretKey s1 = getAccount("S1");
     Signer sk1(KeyUtils::convertKey<SignerKey>(s1.getPublicKey()), 10);

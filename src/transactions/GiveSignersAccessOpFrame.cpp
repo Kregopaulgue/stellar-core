@@ -105,7 +105,7 @@ GiveSignersAccessOpFrame::doCheckValid(Application& app)
                 .NewMeter({ "op-give-signers-access", "failure", "such-signers-access-entry-exists" },
                           "operation")
                 .Mark();
-        innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
+        innerResult().code(GIVE_SIGNERS_ACCESS_SIGNERS_ACCESS_ALREADY_EXISTS);
         return false;
     }
 

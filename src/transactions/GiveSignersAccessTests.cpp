@@ -43,13 +43,25 @@ TEST_CASE("give signers access", "[tx][givesignersaccess]")
     AccountID accessGiverID = accessGiver.getPublicKey();
     AccountID accessTakerID = accessTaker.getPublicKey();
 
+    int64 rightTime = time(nullptr) + INT16_MAX;
+    int64 wrongTime = time(nullptr) - INT16_MAX;
 
     SECTION("access taker is access giver")
     {
         for_all_versions(app, [&]{
             REQUIRE_THROWS_AS(
-                    accessGiver.giveSignersAccess(accessGiverID),
+                    accessGiver.giveSignersAccess(accessGiverID, rightTime),
                     ex_GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE);
+        });
+    }
+
+    //may just froze it
+    SECTION("time frames equal or less then current time")
+    {
+        for_all_versions(app, [&]{
+            REQUIRE_THROWS_AS(
+                    accessGiver.giveSignersAccess(accessTakerID, wrongTime),
+                    ex_GIVE_SIGNERS_ACCESS_TIME_FRAMES_EQUAL_OR_LESS_THEN_CURRENT_TIME);
         });
     }
 
@@ -57,7 +69,7 @@ TEST_CASE("give signers access", "[tx][givesignersaccess]")
     {
         for_versions({1}, app, [&]{
 
-            accessGiver.giveSignersAccess(accessTakerID);
+            accessGiver.giveSignersAccess(accessTakerID, rightTime);
 
             SignersAccessFrame::pointer signersAccess;
 
@@ -65,16 +77,17 @@ TEST_CASE("give signers access", "[tx][givesignersaccess]")
 
             REQUIRE(accessGiverID == signersAccess->getAccessGiverID());
             REQUIRE(accessTakerID == signersAccess->getAccessTakerID());
+            REQUIRE(rightTime == signersAccess->getTimeFrames());
         });
     }
 
     SECTION("signers access already exists")
     {
         for_all_versions(app, [&]{
-            accessGiver.giveSignersAccess(accessTakerID);
+            accessGiver.giveSignersAccess(accessTakerID, rightTime);
             REQUIRE_THROWS_AS(
-                    accessGiver.giveSignersAccess(accessTakerID),
-                    ex_GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST);
+                    accessGiver.giveSignersAccess(accessTakerID, rightTime),
+                    ex_GIVE_SIGNERS_ACCESS_SIGNERS_ACCESS_ALREADY_EXISTS);
         });
     }
 

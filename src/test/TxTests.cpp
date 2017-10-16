@@ -587,12 +587,13 @@ setOptions(AccountID* inflationDest, uint32_t* setFlags,
 }
 
 Operation
-giveSignersAccess(AccountID friendID)
+giveSignersAccess(AccountID friendID, int64 timeFrames)
 {
     Operation op;
     op.body.type(GIVE_ACCESS);
     GiveSignersAccessOp& giveAccessOp = op.body.giveSignersAccessOp();
     giveAccessOp.friendID = friendID;
+    giveAccessOp.timeFrames = timeFrames;
     return op;
 }
 
