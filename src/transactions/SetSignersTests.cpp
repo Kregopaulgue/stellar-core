@@ -34,8 +34,9 @@ TEST_CASE("set signers", "[tx][setsigners]")
     auto accessTaker = root.create("A2", 10000000000);
     auto notFriend = root.create("A3", 1000000000);
 
-    int64 rightTime = time(nullptr) + INT8_MAX;
-    int64 wrongTime = time(nullptr) - INT8_MAX;
+    int secondsDelay = 10;
+    int64 timeForCheck = time(nullptr) + secondsDelay;
+
 
     AccountID accessGiverID = accessGiver.getPublicKey();
     AccountID accessTakerID = accessTaker.getPublicKey();
@@ -45,7 +46,7 @@ TEST_CASE("set signers", "[tx][setsigners]")
     std::string accessTakerIDStr = KeyUtils::toStrKey(accessTakerID);
 
 
-    accessGiver.giveSignersAccess(accessTakerID, rightTime);
+    accessGiver.giveSignersAccess(accessTakerID, timeForCheck);
 
     SecretKey s1 = getAccount("S1");
     Signer sk1(KeyUtils::convertKey<SignerKey>(s1.getPublicKey()), 10);
@@ -80,7 +81,6 @@ TEST_CASE("set signers", "[tx][setsigners]")
                         ex_SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST);
             });
         }
-
     }
 
     SECTION("Controlling signers")
@@ -125,6 +125,16 @@ TEST_CASE("set signers", "[tx][setsigners]")
 
             Signer ag_sk = accessGiverAccount->getAccount().signers[0];
             REQUIRE(ag_sk.key == sk3.key);
+        });
+    }
+
+    SECTION("access' time is up")
+    {
+        sleep(secondsDelay);
+        for_all_versions(app, [&]{
+            REQUIRE_THROWS_AS(
+                    accessTaker.setSigners(accessGiverID, sk3),
+                    ex_SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES);
         });
     }
 }
