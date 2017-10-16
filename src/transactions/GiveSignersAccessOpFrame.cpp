@@ -34,11 +34,13 @@ bool
 GiveSignersAccessOpFrame::doApply(Application &app, LedgerDelta &delta, LedgerManager &ledgerManager)
 {
     AccountID accessGiverID, accessTakerID;
+    int64 uploadTimeFrames;
 
     SignersAccessFrame::pointer signersAccess;
 
     accessGiverID = mSourceAccount->getID();
     accessTakerID = mGiveSignersAccess.friendID;
+    uploadTimeFrames = mGiveSignersAccess.timeFrames;
 
     Database& db = ledgerManager.getDatabase();
     AccountFrame::pointer accessTaker;
@@ -55,7 +57,8 @@ GiveSignersAccessOpFrame::doApply(Application &app, LedgerDelta &delta, LedgerMa
         return false;
     }
 
-    signersAccess = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
+    //check here
+    signersAccess = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID, uploadTimeFrames);
 
     signersAccess->storeAdd(delta, db);
 
@@ -79,6 +82,17 @@ GiveSignersAccessOpFrame::doCheckValid(Application& app)
                           "operation")
                 .Mark();
         innerResult().code(GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE);
+        return false;
+    }
+
+    if (mGiveSignersAccess.timeFrames <= time(nullptr))
+    {
+        app.getMetrics()
+                .NewMeter({ "op-give-signers-access", "invalid",
+                            "friend-is-source" },
+                          "operation")
+                .Mark();
+        innerResult().code(GIVE_SIGNERS_ACCESS_TIME_FRAMES_EQUAL_OR_LESS_THEN_CURRENT_TIME);
         return false;
     }
 
