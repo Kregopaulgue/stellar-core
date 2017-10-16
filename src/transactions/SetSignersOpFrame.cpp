@@ -50,6 +50,14 @@ SetSignersOpFrame::doApply(Application& app, LedgerDelta& delta,
         return false;
     }
 
+    if (signersAccess->getTimeFrames() <= time(nullptr)) {
+        app.getMetrics()
+                .NewMeter({"op-get-signers", "failure", "access-entry-doesnt-exist"},
+                          "operation")
+                .Mark();
+        innerResult().code(SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES);
+        return false;
+    }
 
     AccountFrame::pointer accessGiverAccount;
     accessGiverAccount =
