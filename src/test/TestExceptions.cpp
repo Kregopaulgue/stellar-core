@@ -289,6 +289,8 @@ throwIf(SetSignersResult const& result)
 {
     switch (result.code())
     {
+        case SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES:
+            throw ex_SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES{};
         case SET_SIGNERS_ACCESS_GIVER_DOESNT_EXIST:
             throw ex_SET_SIGNERS_ACCESS_GIVER_DOESNT_EXIST{};
         case SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST:
