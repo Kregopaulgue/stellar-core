@@ -43,7 +43,7 @@ namespace stellar
         SignersAccessFrame();
         SignersAccessFrame(LedgerEntry const& from);
         SignersAccessFrame(SignersAccessFrame const& from);
-        SignersAccessFrame(AccountID const& accessGiverID, AccountID const& accessTakerID);
+        SignersAccessFrame(AccountID const& accessGiverID, AccountID const& accessTakerID, int64 const& timeFrames);
 
         SignersAccessFrame& operator=(SignersAccessFrame const& other);
 
@@ -55,6 +55,8 @@ namespace stellar
 
         AccountID const& getAccessGiverID() const;
         AccountID const& getAccessTakerID() const;
+
+        int64 const& getTimeFrames() const;
 
         SignersAccessEntry const&
         getSignersAccess() const

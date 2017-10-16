@@ -27,12 +27,13 @@ namespace stellar
             "("
             "accessgiverid VARCHAR(56),"
             "accesstakerid VARCHAR(56),"
+            "timeframes BIGINT,"
             "lastmodified INT NOT NULL,"
             "PRIMARY KEY(accessgiverid, accesstakerid)"
             ");";
 
     static const char* signersAccessColumnSelector =
-            "SELECT accessgiverid, accesstakerid, lastmodified FROM signersaccess";
+            "SELECT accessgiverid, accesstakerid, timeframes, lastmodified FROM signersaccess";
 
     SignersAccessFrame::SignersAccessFrame() : EntryFrame(SIGNERS_ACCESS), mSignersAccessEntry(mEntry.data.signersAccess())
     {
@@ -47,10 +48,12 @@ namespace stellar
     {
     }
 
-    SignersAccessFrame::SignersAccessFrame(AccountID const& giverID, AccountID const& friendID) : SignersAccessFrame()
+    SignersAccessFrame::SignersAccessFrame(AccountID const& giverID, AccountID const& friendID,
+                                           int64 const& timeFrames) : SignersAccessFrame()
     {
         mSignersAccessEntry.accessGiverID = giverID;
         mSignersAccessEntry.accessTakerID = friendID;
+        mSignersAccessEntry.timeFrames = timeFrames;
     }
 
     SignersAccessFrame&
@@ -77,6 +80,12 @@ namespace stellar
         return mSignersAccessEntry.accessTakerID;
     }
 
+    int64 const&
+    SignersAccessFrame::getTimeFrames() const
+    {
+        return mSignersAccessEntry.timeFrames;
+    }
+
     bool
     SignersAccessFrame::isValid()
     {
@@ -99,12 +108,13 @@ namespace stellar
 
         std::string sql;
 
+        //check here
         if (insert)
         {
             sql = std::string(
                     "INSERT INTO signersaccess "
-                    "( accessgiverid, accesstakerid, lastmodified )"
-                    "VALUES ( :agid, :atid, :l )");
+                    "( accessgiverid, accesstakerid, timeframes, lastmodified )"
+                    "VALUES ( :agid, :atid, :tf, :l )");
         }
         else
         {
@@ -113,7 +123,8 @@ namespace stellar
                     "SET accesstakerid = :atid WHERE accessgiverid = :agid");
         }
 
-        auto t = getLastModified();
+        auto lastModified = getLastModified();
+        auto loadTimeFrimes = mSignersAccessEntry.timeFrames;
 
         auto prep = db.getPreparedStatement(sql);
         {
@@ -122,7 +133,8 @@ namespace stellar
             soci::statement& st = prep.statement();
             st.exchange(use(accessGiverIDStrKey, "agid"));
             st.exchange(use(accessTakerIDStrKey, "atid"));
-            st.exchange(use(t, "l"));
+            st.exchange(use(loadTimeFrimes, "tf"));
+            st.exchange(use(lastModified, "l"));
             st.define_and_bind();
             {
                 auto timer = insert ? db.getInsertTimer("signersaccess")
@@ -237,14 +249,16 @@ namespace stellar
         std::string accessTakerIDStrKey = KeyUtils::toStrKey(accessTakerID);
 
 
-        SignersAccessFrame::pointer res = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
+        SignersAccessFrame::pointer res = make_shared<SignersAccessFrame>();
         SignersAccessEntry& signersAccess = res->getSignersAccess();
 
+        //check here
         auto prep =
-                db.getPreparedStatement("SELECT lastmodified FROM signersaccess "
+                db.getPreparedStatement("SELECT timeframes, lastmodified FROM signersaccess "
                                                 "WHERE accessgiverid=:agid AND accesstakerid=:atid");
         auto& st = prep.statement();
 
+        st.exchange(into(signersAccess.timeFrames));
         st.exchange(into(res->getLastModified()));
 
         st.exchange(use(accessGiverIDStrKey));
@@ -299,16 +313,17 @@ namespace stellar
 
         std::string accessGiverKey, accessTakerKey;
 
-        SignersAccessFrame::pointer res = make_shared<SignersAccessFrame>(accessGiverID, accessTakerID);
+        SignersAccessFrame::pointer res = make_shared<SignersAccessFrame>();
         SignersAccessEntry& signersAccess = res->getSignersAccess();
 
 
         auto prep =
-                db.getPreparedStatement("SELECT accessgiverid, accesstakerid, lastmodified "
+                db.getPreparedStatement("SELECT accessgiverid, accesstakerid, timeframes, lastmodified "
                                                 "FROM signersaccess WHERE accessgiverid=:agid AND accesstakerid=:atid");
         auto& st = prep.statement();
         st.exchange(into(accessGiverIDStrKey));
         st.exchange(into(accessTakerIDStrKey));
+        st.exchange(into(signersAccess.timeFrames));
         st.exchange(into(res->getLastModified()));
 
         st.exchange(use(accessGiverIDStrKey));
@@ -349,9 +364,11 @@ namespace stellar
 
         std::string accessGiverIDStrKey;
         std::string accessTakerIDStrKey;
+        int64 timeFramesKey;
 
         soci::indicator accessGiverIDIndicator;
         soci::indicator accessTakerIDIndicator;
+        soci::indicator timeFramesIndicator;
 
         LedgerEntry le;
         le.data.type(SIGNERS_ACCESS);
@@ -362,6 +379,7 @@ namespace stellar
 
         st.exchange(into(accessGiverIDStrKey, accessGiverIDIndicator));
         st.exchange(into(accessTakerIDStrKey, accessTakerIDIndicator));
+        st.exchange(into(timeFramesKey, timeFramesIndicator));
         st.exchange(into(le.lastModifiedLedgerSeq));
         st.define_and_bind();
         st.execute(true);
@@ -370,8 +388,10 @@ namespace stellar
         {
             signersAccessEntry.accessGiverID = KeyUtils::fromStrKey<PublicKey>(accessGiverIDStrKey);
             signersAccessEntry.accessTakerID = KeyUtils::fromStrKey<PublicKey>(accessTakerIDStrKey);
+            signersAccessEntry.timeFrames = timeFramesKey;
 
-            if (accessGiverIDIndicator != soci::i_ok || accessTakerIDIndicator != soci::i_ok)
+            if (accessGiverIDIndicator != soci::i_ok || accessTakerIDIndicator != soci::i_ok
+                    || timeFramesIndicator != soci::i_ok)
             {
                 throw std::runtime_error("bad database state");
             }
