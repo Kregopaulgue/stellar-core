@@ -224,6 +224,8 @@ struct SignersAccessEntry
     AccountID accessGiverID; // source account id that gives access
     AccountID accessTakerID; // friend account id that takes access
 
+    int64 timeFrames;
+
     // reserved for future use
     union switch (int v)
     {

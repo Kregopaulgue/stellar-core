@@ -131,6 +131,7 @@ case SIGNERS_ACCESS:
     {
         AccountID accessGiverID;
         AccountID accessTakerID;
+        int64 timeFrames;
     } signersAccess;
 };
 
