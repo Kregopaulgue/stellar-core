@@ -42,6 +42,8 @@ struct ExpectedOpResult
     PaymentResultCode paymentCode;
     AccountMergeResultCode accountMergeCode;
     SetOptionsResultCode setOptionsResultCode;
+    GiveSignersAccessResultCode giveSignersAccessResultCode;
+    SetSignersResultCode setSignersResultCode;
 
     ExpectedOpResult(OperationResultCode code) : code{code}
     {
@@ -64,6 +66,18 @@ struct ExpectedOpResult
         : code{opINNER}
         , type{SET_OPTIONS}
         , setOptionsResultCode{setOptionsResultCode}
+    {
+    }
+    ExpectedOpResult(GiveSignersAccessResultCode giveSignersAccessResultCode)
+            : code{opINNER}
+            , type{GIVE_ACCESS}
+            , giveSignersAccessResultCode{giveSignersAccessResultCode}
+    {
+    }
+    ExpectedOpResult(SetSignersResultCode setSignersResultCode)
+            : code{opINNER}
+            , type{SET_SIGNERS}
+            , setSignersResultCode{setSignersResultCode}
     {
     }
 };
@@ -106,6 +120,12 @@ expectedResult(int64_t fee, int opsCount, TransactionResultCode code,
                 break;
             case SET_OPTIONS:
                 r.tr().setOptionsResult().code(o.setOptionsResultCode);
+                break;
+            case GIVE_ACCESS:
+                r.tr().giveSignersAccessResult().code(o.giveSignersAccessResultCode);
+                break;
+            case SET_SIGNERS:
+                r.tr().setSignersResult().code(o.setSignersResultCode);
                 break;
             default:
                 break;

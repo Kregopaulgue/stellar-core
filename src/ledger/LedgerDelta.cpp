@@ -358,6 +358,11 @@ LedgerDelta::markMeters(Application& app) const
                 .NewMeter({"ledger", "data", "add"}, "entry")
                 .Mark();
             break;
+        case SIGNERS_ACCESS:
+            app.getMetrics()
+                .NewMeter({"ledger", "signersAccess", "add"}, "entry")
+                .Mark();
+            break;
         }
     }
 
@@ -385,6 +390,11 @@ LedgerDelta::markMeters(Application& app) const
                 .NewMeter({"ledger", "data", "modify"}, "entry")
                 .Mark();
             break;
+        case SIGNERS_ACCESS:
+            app.getMetrics()
+                    .NewMeter({"ledger", "signersAccess", "modify"}, "entry")
+                    .Mark();
+            break;
         }
     }
 
@@ -411,6 +421,11 @@ LedgerDelta::markMeters(Application& app) const
             app.getMetrics()
                 .NewMeter({"ledger", "data", "delete"}, "entry")
                 .Mark();
+            break;
+        case SIGNERS_ACCESS:
+            app.getMetrics()
+                    .NewMeter({"ledger", "signersAccess", "delete"}, "entry")
+                    .Mark();
             break;
         }
     }

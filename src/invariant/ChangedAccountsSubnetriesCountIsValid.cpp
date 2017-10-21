@@ -29,6 +29,8 @@ getAccount(LedgerEntry const& entry)
         return d.offer().sellerID;
     case DATA:
         return d.data().accountID;
+    case SIGNERS_ACCESS:
+        return d.signersAccess().accessGiverID;
     default:
         assert(false);
     }
@@ -46,6 +48,8 @@ getAccount(LedgerKey const& key)
     case OFFER:
         return key.offer().sellerID;
     case DATA:
+        return key.data().accountID;
+    case SIGNERS_ACCESS:
         return key.data().accountID;
     default:
         assert(false);

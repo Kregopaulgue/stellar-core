@@ -38,6 +38,8 @@ SetOptionsOpFrame::getThresholdLevel() const
     return ThresholdLevel::MEDIUM;
 }
 
+
+//*CHECK HERE FOR SIGNERS HINT*
 bool
 SetOptionsOpFrame::doApply(Application& app, LedgerDelta& delta,
                            LedgerManager& ledgerManager)

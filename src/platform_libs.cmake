@@ -1,4 +1,8 @@
-find_package(PostgreSQL REQUIRED)
+find_package(PostgreSQL)
+
+#if()
+
+message(${PostgreSQL_LIBRARIES})
 
 target_link_libraries(core ${PostgreSQL_LIBRARIES})
 target_link_libraries(core pq)

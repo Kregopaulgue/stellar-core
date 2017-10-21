@@ -136,6 +136,24 @@ TestAccount::setOptions(AccountID* inflationDest, uint32_t* setFlags,
 }
 
 void
+TestAccount::giveSignersAccess(AccountID friendID, int64 timeFrames)
+{
+    applyTx(tx({txtest::giveSignersAccess(friendID, timeFrames)}), mApp);
+}
+
+SignersAccessFrame::pointer
+TestAccount::loadSignersAccess(AccountID friendID)
+{
+    return txtest::loadSignersAccess(getPublicKey(), friendID, mApp, true);
+}
+
+void
+TestAccount::setSigners(AccountID giverID, Signer signer)
+{
+    applyTx(tx({txtest::setSigners(giverID, signer)}), mApp);
+}
+
+void
 TestAccount::manageData(std::string const& name, DataValue* value)
 {
     applyTx(tx({txtest::manageData(name, value)}), mApp);

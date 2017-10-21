@@ -83,3 +83,5 @@
 .idea/workspace.xml
 cmake-build-release/
 cmake-build-debug/
+/test
+.idea

@@ -1,6 +1,7 @@
 #common definitions. #not valid for clang in MAC
 
 add_definitions(
+        -DASIO_STANDALONE
         -DHAVE_CONFIG_H
         -DASIO_SEPARATE_COMPILATION=1
         -DSQLITE_OMIT_LOAD_EXTENSION=1

@@ -216,6 +216,19 @@ loadTrustLine(SecretKey const& k, Asset const& asset, Application& app,
     return res;
 }
 
+SignersAccessFrame::pointer
+loadSignersAccess(PublicKey const& accessGiverID, PublicKey const& accessTakerID,
+                  Application& app, bool mustExist)
+{
+    SignersAccessFrame::pointer res =
+            SignersAccessFrame::loadSignersAccess(accessGiverID, accessTakerID, app.getDatabase());
+    if (mustExist)
+    {
+        REQUIRE(res);
+    }
+    return res;
+}
+
 xdr::xvector<Signer, 20>
 getAccountSigners(PublicKey const& k, Application& app)
 {
@@ -570,6 +583,28 @@ setOptions(AccountID* inflationDest, uint32_t* setFlags,
         setOp.homeDomain.activate() = *homeDomain;
     }
 
+    return op;
+}
+
+Operation
+giveSignersAccess(AccountID friendID, int64 timeFrames)
+{
+    Operation op;
+    op.body.type(GIVE_ACCESS);
+    GiveSignersAccessOp& giveAccessOp = op.body.giveSignersAccessOp();
+    giveAccessOp.friendID = friendID;
+    giveAccessOp.timeFrames = timeFrames;
+    return op;
+}
+
+Operation
+setSigners(AccountID giverID, Signer signer)
+{
+    Operation op;
+    op.body.type(SET_SIGNERS);
+    SetSignersOp& setSignersOp = op.body.setSignersOp();
+    setSignersOp.accessGiverID = giverID;
+    setSignersOp.signer = signer;
     return op;
 }
 

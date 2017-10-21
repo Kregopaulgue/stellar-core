@@ -261,6 +261,54 @@ throwIf(ManageDataResult const& result)
 }
 
 void
+throwIf(GiveSignersAccessResult const& result)
+{
+    switch (result.code())
+    {
+        case GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE:
+            throw ex_GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE{};
+        case GIVE_SIGNERS_ACCESS_TIME_FRAMES_EQUAL_OR_LESS_THEN_CURRENT_TIME:
+            throw ex_GIVE_SIGNERS_ACCESS_TIME_FRAMES_EQUAL_OR_LESS_THEN_CURRENT_TIME{};
+        case GIVE_SIGNERS_ACCESS_SIGNERS_ACCESS_ALREADY_EXISTS:
+            throw ex_GIVE_SIGNERS_ACCESS_SIGNERS_ACCESS_ALREADY_EXISTS{};
+        case GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED:
+            throw ex_GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED{};
+        case GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST:
+            throw ex_GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST{};
+        case GIVE_SIGNERS_ACCESS_LOW_RESERVE:
+            throw ex_GIVE_SIGNERS_ACCESS_LOW_RESERVE{};
+        case GIVE_SIGNERS_ACCESS_SUCCESS:
+            break;
+        default:
+            throw ex_UNKNOWN{};
+    }
+}
+
+void
+throwIf(SetSignersResult const& result)
+{
+    switch (result.code())
+    {
+        case SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES:
+            throw ex_SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES{};
+        case SET_SIGNERS_ACCESS_GIVER_DOESNT_EXIST:
+            throw ex_SET_SIGNERS_ACCESS_GIVER_DOESNT_EXIST{};
+        case SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST:
+            throw ex_SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST{};
+        case SET_SIGNERS_FRIEND_IS_SOURCE:
+            throw ex_SET_SIGNERS_FRIEND_IS_SOURCE{};
+        case SET_SIGNERS_INVALID_ACCESS:
+            throw ex_SET_SIGNERS_INVALID_ACCESS{};
+        case SET_SIGNERS_BAD_SIGNER:
+            throw ex_SET_SIGNERS_BAD_SIGNER{};
+        case SET_SIGNERS_SUCCESS:
+            break;
+        default:
+            throw ex_UNKNOWN{};
+    }
+}
+
+void
 throwIf(TransactionResult const& result)
 {
     switch (result.result.code())
@@ -311,6 +359,12 @@ throwIf(TransactionResult const& result)
         break;
     case MANAGE_DATA:
         throwIf(opResult.tr().manageDataResult());
+        break;
+    case GIVE_ACCESS:
+        throwIf(opResult.tr().giveSignersAccessResult());
+        break;
+    case SET_SIGNERS:
+        throwIf(opResult.tr().setSignersResult());
         break;
     }
 }

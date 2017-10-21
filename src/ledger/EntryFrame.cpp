@@ -11,6 +11,7 @@
 #include "ledger/LedgerDelta.h"
 #include "ledger/OfferFrame.h"
 #include "ledger/TrustFrame.h"
+#include "ledger/SignersAccessFrame.h"
 #include "xdrpp/marshal.h"
 #include "xdrpp/printer.h"
 
@@ -36,6 +37,9 @@ EntryFrame::FromXDR(LedgerEntry const& from)
         break;
     case DATA:
         res = std::make_shared<DataFrame>(from);
+        break;
+    case SIGNERS_ACCESS:
+        res = std::make_shared<SignersAccessFrame>(from);
         break;
     }
     return res;
@@ -71,6 +75,15 @@ EntryFrame::storeLoad(LedgerKey const& key, Database& db)
         auto const& data = key.data();
         res = std::static_pointer_cast<EntryFrame>(
             DataFrame::loadData(data.accountID, data.dataName, db));
+    }
+    break;
+    case SIGNERS_ACCESS:
+    {
+        auto const& signersAccess = key.signersAccess();
+        res = std::static_pointer_cast<EntryFrame>(
+                SignersAccessFrame::loadSignersAccess(signersAccess.accessGiverID,
+                                                      signersAccess.accessTakerID, db));
+
     }
     break;
     }
@@ -211,6 +224,8 @@ EntryFrame::exists(Database& db, LedgerKey const& key)
         return OfferFrame::exists(db, key);
     case DATA:
         return DataFrame::exists(db, key);
+    case SIGNERS_ACCESS:
+        return SignersAccessFrame::exists(db, key);
     default:
         abort();
     }
@@ -232,6 +247,9 @@ EntryFrame::storeDelete(LedgerDelta& delta, Database& db, LedgerKey const& key)
         break;
     case DATA:
         DataFrame::storeDelete(delta, db, key);
+        break;
+    case SIGNERS_ACCESS:
+        SignersAccessFrame::storeDelete(delta, db, key);
         break;
     }
 }
@@ -265,6 +283,12 @@ LedgerEntryKey(LedgerEntry const& e)
         k.type(DATA);
         k.data().accountID = d.data().accountID;
         k.data().dataName = d.data().dataName;
+        break;
+
+    case SIGNERS_ACCESS:
+        k.type(SIGNERS_ACCESS);
+        k.signersAccess().accessGiverID = d.signersAccess().accessGiverID;
+        k.signersAccess().accessTakerID = d.signersAccess().accessTakerID;
         break;
     }
     return k;
